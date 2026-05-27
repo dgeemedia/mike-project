@@ -1,3 +1,4 @@
+// mikes-sanity/schemas/project.js
 import { defineField, defineType } from 'sanity'
 
 export default defineType({

@@ -1,3 +1,4 @@
+// mikes-sanity/schemas/index.js
 import about from './about'
 import project from './project'
 import post from './post'

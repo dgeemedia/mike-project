@@ -1,3 +1,4 @@
+// mikes-site/js/content.js
 // =============================================
 //   CONTENT LOADER — mikes-site/js/content.js
 //   Hydrates each page with live Sanity content

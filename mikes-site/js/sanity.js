@@ -1,3 +1,4 @@
+// mikes-site/js/sanity.js
 // =============================================
 //   SANITY CLIENT — mikes-site/js/sanity.js
 //   Fetches live content from Sanity CMS
