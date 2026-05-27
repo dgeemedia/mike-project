@@ -1,4 +1,3 @@
-// mikes-site/js/sanity.js
 // =============================================
 //   SANITY CLIENT — mikes-site/js/sanity.js
 //   Fetches live content from Sanity CMS
@@ -116,3 +115,37 @@ export async function getSiteSettings() {
 }
 
 export default sanityFetch
+
+// Homepage content
+export async function getHomepage() {
+  return sanityFetch(`*[_type == "homepage" && _id == "homepage"][0]{
+    hero{
+      eyebrow, headingLine1, headingLine2, headingLine3, subtext,
+      primaryButtonText, secondaryButtonText,
+      backgroundImage{ asset->{_id, url}, alt }
+    },
+    heroBadges[]{ icon, title, subtitle },
+    stats[]{ number, prefix, suffix, label },
+    aboutSnippet{
+      label, headingMain, headingAccent,
+      paragraph1, paragraph2, highlights,
+      buttonText, yearsExperience,
+      mainImage{ asset->{_id, url}, alt },
+      accentImage{ asset->{_id, url}, alt }
+    },
+    servicesSection{ label, headingMain, headingAccent, subtext, buttonText },
+    whyChoose{ label, headingMain, headingAccent, subtext, cards[]{ title, body } },
+    projectsSection{ label, headingMain, headingAccent },
+    process{ label, headingMain, headingAccent, subtext, steps[]{ title, description } },
+    testimonialsSection{ label, headingMain, headingAccent, subtext },
+    ctaBanner{ heading, subtext, primaryButtonText, secondaryButtonText }
+  }`)
+}
+
+// Design settings
+export async function getDesignSettings() {
+  return sanityFetch(`*[_type == "designSettings" && _id == "designSettings"][0]{
+    accentColor, accentDark, primaryColor, textColor, lightBg,
+    headingFont, bodyFont
+  }`)
+}
