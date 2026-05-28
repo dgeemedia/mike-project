@@ -483,96 +483,690 @@
   {
     "fields": [
       {
-        "validation": [
+        "fields": [
           {
-            "level": "error",
-            "rules": [
-              {
-                "flag": "presence",
-                "constraint": "required"
-              }
-            ]
+            "initialValue": "About",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Mikes Constructions",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
           }
         ],
-        "description": "e.g. \"About Our Craftsmanship\"",
-        "name": "headline",
-        "type": "string",
-        "title": "Section Headline"
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
       },
       {
-        "rows": 4,
-        "validation": [
+        "fields": [
           {
-            "level": "error",
-            "rules": [
+            "initialValue": "Our Story",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Built on",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Integrity",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 4,
+            "name": "paragraph1",
+            "type": "text"
+          },
+          {
+            "rows": 4,
+            "name": "paragraph2",
+            "type": "text"
+          },
+          {
+            "rows": 4,
+            "name": "paragraph3",
+            "type": "text"
+          },
+          {
+            "initialValue": 15,
+            "name": "yearsExperience",
+            "type": "number",
+            "title": "Years Experience Badge"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
               {
-                "flag": "presence",
-                "constraint": "required"
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
               }
-            ]
+            ],
+            "name": "mainImage",
+            "type": "image",
+            "title": "Main Team Photo"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
+              }
+            ],
+            "name": "accentImage",
+            "type": "image",
+            "title": "Accent Photo"
+          }
+        ],
+        "name": "story",
+        "type": "object",
+        "title": "📖 Our Story Section"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Our Commitment",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Your Satisfaction Is",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Our Priority",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 3,
+            "name": "paragraph1",
+            "type": "text"
+          },
+          {
+            "rows": 3,
+            "name": "paragraph2",
+            "type": "text"
+          }
+        ],
+        "name": "commitment",
+        "type": "object",
+        "title": "🤝 Our Commitment Section"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Why Choose Us",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Seven Reasons to",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Choose Mike's",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "of": [
+              {
+                "fields": [
+                  {
+                    "name": "title",
+                    "type": "string"
+                  },
+                  {
+                    "rows": 2,
+                    "name": "body",
+                    "type": "text",
+                    "title": "Description"
+                  }
+                ],
+                "type": "object"
+              }
+            ],
+            "name": "reasons",
+            "type": "array",
+            "title": "Reason Cards"
+          }
+        ],
+        "name": "whyChoose",
+        "type": "object",
+        "title": "✅ Why Choose Us"
+      },
+      {
+        "fields": [
+          {
+            "rows": 5,
+            "name": "quote",
+            "type": "text",
+            "title": "Quote Text"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "title": "Client Name"
+          },
+          {
+            "description": "e.g. \"Wistaston, Cheshire — Long-standing client\"",
+            "name": "location",
+            "type": "string",
+            "title": "Location & Note"
+          }
+        ],
+        "name": "featuredTestimonial",
+        "type": "object",
+        "title": "⭐ Featured Testimonial (big quote)"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Ready to Start Your Project?",
+            "name": "heading",
+            "type": "string"
+          },
+          {
+            "rows": 2,
+            "name": "subtext",
+            "type": "text"
+          },
+          {
+            "initialValue": "Get a Free Quote",
+            "name": "primaryButtonText",
+            "type": "string",
+            "title": "Primary Button"
+          },
+          {
+            "initialValue": "View Our Work",
+            "name": "secondaryButtonText",
+            "type": "string",
+            "title": "Secondary Button"
+          }
+        ],
+        "name": "ctaBanner",
+        "type": "object",
+        "title": "📣 CTA Banner"
+      }
+    ],
+    "name": "aboutPage",
+    "type": "document",
+    "title": "About Us Page"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "initialValue": "Our",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Services",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          }
+        ],
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
+      },
+      {
+        "rows": 3,
+        "description": "The paragraph shown at the top of the services page",
+        "name": "introText",
+        "type": "text",
+        "title": "Intro Paragraph"
+      },
+      {
+        "description": "Each service becomes a full section on the page",
+        "of": [
+          {
+            "fields": [
+              {
+                "name": "icon",
+                "type": "string",
+                "title": "Icon (emoji)"
+              },
+              {
+                "description": "e.g. \"Service 01\"",
+                "name": "label",
+                "type": "string",
+                "title": "Service Number Label"
+              },
+              {
+                "name": "headingMain",
+                "type": "string",
+                "title": "Heading (white)"
+              },
+              {
+                "name": "headingAccent",
+                "type": "string",
+                "title": "Heading (gold)"
+              },
+              {
+                "rows": 3,
+                "name": "paragraph1",
+                "type": "text",
+                "title": "First Paragraph"
+              },
+              {
+                "rows": 3,
+                "name": "paragraph2",
+                "type": "text",
+                "title": "Second Paragraph"
+              },
+              {
+                "options": {
+                  "hotspot": true
+                },
+                "fields": [
+                  {
+                    "name": "alt",
+                    "type": "string",
+                    "title": "Alt text"
+                  }
+                ],
+                "name": "mainImage",
+                "type": "image"
+              },
+              {
+                "options": {
+                  "hotspot": true
+                },
+                "fields": [
+                  {
+                    "name": "alt",
+                    "type": "string",
+                    "title": "Alt text"
+                  }
+                ],
+                "name": "accentImage",
+                "type": "image"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "services",
+        "type": "array",
+        "title": "🔧 Individual Services"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Ready to Transform Your Space?",
+            "name": "heading",
+            "type": "string"
+          },
+          {
+            "rows": 2,
+            "name": "subtext",
+            "type": "text"
+          },
+          {
+            "initialValue": "Get a Free Quote",
+            "name": "primaryButtonText",
+            "type": "string",
+            "title": "Primary Button"
+          },
+          {
+            "initialValue": "View Our Work",
+            "name": "secondaryButtonText",
+            "type": "string",
+            "title": "Secondary Button"
+          }
+        ],
+        "name": "ctaBanner",
+        "type": "object",
+        "title": "📣 CTA Banner"
+      }
+    ],
+    "name": "servicesPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "initialValue": "Our Recent",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Projects",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          }
+        ],
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Like What You See?",
+            "name": "heading",
+            "type": "string"
+          },
+          {
+            "rows": 2,
+            "name": "subtext",
+            "type": "text"
+          },
+          {
+            "initialValue": "Get a Free Quote",
+            "name": "buttonText",
+            "type": "string"
+          }
+        ],
+        "name": "ctaBanner",
+        "type": "object",
+        "title": "📣 CTA Banner"
+      }
+    ],
+    "name": "projectsPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "initialValue": "Get in",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Touch",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          }
+        ],
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Contact Details",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Let's Discuss",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Your Project",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 3,
+            "name": "paragraph",
+            "type": "text",
+            "title": "Intro Paragraph"
           }
         ],
         "name": "intro",
-        "type": "text",
-        "title": "Introduction Paragraph"
+        "type": "object",
+        "title": "📝 Intro Text"
       },
       {
-        "rows": 4,
-        "name": "body",
-        "type": "text",
-        "title": "Main Body Paragraph"
-      },
-      {
-        "description": "Shown in the \"15+ Years\" badge",
-        "name": "yearsExperience",
-        "type": "number",
-        "title": "Years of Experience"
-      },
-      {
-        "options": {
-          "hotspot": true
-        },
         "fields": [
           {
-            "name": "alt",
-            "type": "string",
-            "title": "Alt text"
-          }
-        ],
-        "name": "mainImage",
-        "type": "image",
-        "title": "Main Team Photo"
-      },
-      {
-        "options": {
-          "hotspot": true
-        },
-        "fields": [
+            "initialValue": "Crewe, Nantwich, Wistaston, Winsford, Sandbach, Congleton & across Cheshire",
+            "name": "serviceArea",
+            "type": "string"
+          },
           {
-            "name": "alt",
+            "name": "email",
             "type": "string",
-            "title": "Alt text"
+            "title": "Email Address"
+          },
+          {
+            "initialValue": "Monday – Friday: 8am – 6pm",
+            "name": "workingHours",
+            "type": "string",
+            "title": "Working Hours Line 1"
+          },
+          {
+            "initialValue": "Saturday: 9am – 2pm (by appointment)",
+            "name": "workingHours2",
+            "type": "string",
+            "title": "Working Hours Line 2"
           }
         ],
-        "name": "accentImage",
-        "type": "image",
-        "title": "Accent Photo (smaller overlay)"
+        "name": "contactDetails",
+        "type": "object",
+        "title": "📋 Contact Details"
       },
       {
-        "description": "The bullet points under the text",
+        "description": "The numbered list of steps shown below the contact info",
         "of": [
           {
             "type": "string"
           }
         ],
-        "name": "highlights",
+        "name": "nextSteps",
         "type": "array",
-        "title": "Key Highlights (checklist)"
+        "title": "✅ \"What Happens Next\" Steps"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "initialValue": "🏘",
+                "name": "icon",
+                "type": "string",
+                "title": "Icon (emoji)"
+              },
+              {
+                "name": "title",
+                "type": "string",
+                "title": "Area Name"
+              },
+              {
+                "rows": 2,
+                "name": "description",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "locations",
+        "type": "array",
+        "title": "📍 Areas We Cover Cards"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Coverage",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Areas We",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Cover",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 2,
+            "name": "subtext",
+            "type": "text"
+          }
+        ],
+        "name": "locationsSection",
+        "type": "object",
+        "title": "📍 Locations Section Heading"
       }
     ],
-    "name": "about",
+    "name": "contactPage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "initialValue": "Frequently Asked",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Questions",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          }
+        ],
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
+      },
+      {
+        "initialValue": "Got Questions?",
+        "name": "sideLabel",
+        "type": "string",
+        "title": "Side Label Text"
+      },
+      {
+        "initialValue": "We've Got",
+        "name": "sideHeadingMain",
+        "type": "string",
+        "title": "Side Heading (white)"
+      },
+      {
+        "initialValue": "Answers",
+        "name": "sideHeadingAccent",
+        "type": "string",
+        "title": "Side Heading (gold)"
+      },
+      {
+        "rows": 2,
+        "initialValue": "Can't find what you're looking for? Get in touch directly and we'll be happy to help.",
+        "name": "sideParagraph",
+        "type": "text"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "question",
+                "type": "string"
+              },
+              {
+                "rows": 4,
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "answer",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "❓ FAQ Items"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Still Have Questions?",
+            "name": "heading",
+            "type": "string"
+          },
+          {
+            "rows": 2,
+            "name": "subtext",
+            "type": "text"
+          },
+          {
+            "initialValue": "Contact Us Today",
+            "name": "buttonText",
+            "type": "string"
+          }
+        ],
+        "name": "ctaBanner",
+        "type": "object",
+        "title": "📣 CTA Banner"
+      }
+    ],
+    "name": "faqPage",
     "type": "document",
-    "title": "About Us"
+    "title": "FAQ Page"
   },
   {
     "fields": [

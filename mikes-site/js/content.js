@@ -1,386 +1,472 @@
 // =============================================
-//   CONTENT LOADER — full homepage wiring
+//   CONTENT LOADER — mikes-site/js/content.js
 // =============================================
 import {
-  getHomepage, getAbout, getFeaturedProjects, getProjects,
-  getPosts, getServices, getTestimonials,
-  getSiteSettings, getDesignSettings, imageUrl
+  getHomepage, getAboutPage, getServicesPage, getProjectsPage,
+  getContactPage, getFaqPage, getFeaturedProjects, getProjects,
+  getPosts, getTestimonials, getSiteSettings, getDesignSettings, imageUrl
 } from './sanity.js'
 
 const page = location.pathname.split('/').filter(Boolean).pop()?.replace('.html','') || 'index'
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    await Promise.all([
-      applyDesignSettings(),
-      loadSiteSettings(),
-    ])
-    if (page === 'index' || page === '') loadHomepage()
-    else if (page === 'about') loadAbout()
-    else if (page === 'projects') loadProjects()
-    else if (page === 'blog') loadBlog()
-    else if (page === 'services') loadServices()
-  } catch(err) {
-    console.warn('Sanity load error:', err)
-  }
+    await Promise.all([ applyDesign(), loadSiteSettings() ])
+    if      (page === 'index'   || page === '') loadHomepage()
+    else if (page === 'about')                  loadAbout()
+    else if (page === 'services')               loadServices()
+    else if (page === 'projects')               loadProjects()
+    else if (page === 'contact')                loadContact()
+    else if (page === 'faq')                    loadFaq()
+    else if (page === 'blog')                   loadBlog()
+  } catch(e) { console.warn('Sanity:', e) }
 })
 
-// ══════════════════════════════════════
-//   DESIGN SETTINGS — apply CSS vars
-// ══════════════════════════════════════
-async function applyDesignSettings() {
+// ═══════════════════════════════════════════
+//  DESIGN SETTINGS
+// ═══════════════════════════════════════════
+async function applyDesign() {
   const d = await getDesignSettings()
   if (!d) return
-  const root = document.documentElement
-  if (d.accentColor)  root.style.setProperty('--accent', d.accentColor)
-  if (d.accentDark)   root.style.setProperty('--accent-dark', d.accentDark)
-  if (d.primaryColor) root.style.setProperty('--primary', d.primaryColor)
-  if (d.textColor)    root.style.setProperty('--text', d.textColor)
-  if (d.lightBg)      root.style.setProperty('--light', d.lightBg)
-
-  // Fonts
-  const googleFonts = ['Playfair Display','Cormorant Garamond','Merriweather','Montserrat','Inter','Open Sans','Lato','Source Sans Pro','Raleway']
+  const r = document.documentElement
+  if (d.accentColor)  r.style.setProperty('--accent', d.accentColor)
+  if (d.accentDark)   r.style.setProperty('--accent-dark', d.accentDark)
+  if (d.primaryColor) r.style.setProperty('--primary', d.primaryColor)
+  if (d.textColor)    r.style.setProperty('--text', d.textColor)
+  if (d.lightBg)      r.style.setProperty('--light', d.lightBg)
   if (d.headingFont && d.headingFont !== 'Playfair Display') {
-    loadGoogleFont(d.headingFont)
-    document.querySelectorAll('h1,h2,h3,h4').forEach(el => el.style.fontFamily = `'${d.headingFont}', serif`)
+    addFont(d.headingFont)
+    document.querySelectorAll('h1,h2,h3,h4').forEach(el => el.style.fontFamily = `'${d.headingFont}',serif`)
   }
   if (d.bodyFont && d.bodyFont !== 'Raleway') {
-    loadGoogleFont(d.bodyFont)
-    document.body.style.fontFamily = `'${d.bodyFont}', sans-serif`
+    addFont(d.bodyFont)
+    document.body.style.fontFamily = `'${d.bodyFont}',sans-serif`
   }
 }
-
-function loadGoogleFont(name) {
-  const link = document.createElement('link')
-  link.rel = 'stylesheet'
-  link.href = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g,'+')}:wght@300;400;500;600;700&display=swap`
-  document.head.appendChild(link)
+function addFont(name) {
+  const l = document.createElement('link')
+  l.rel  = 'stylesheet'
+  l.href = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g,'+')}:wght@300;400;500;600;700&display=swap`
+  document.head.appendChild(l)
 }
 
-// ══════════════════════════════════════
-//   SITE SETTINGS
-// ══════════════════════════════════════
+// ═══════════════════════════════════════════
+//  SITE SETTINGS — socials, email, phone
+// ═══════════════════════════════════════════
 async function loadSiteSettings() {
   const s = await getSiteSettings()
   if (!s) return
-  if (s.facebook)  updateHref('[aria-label="Facebook"]', s.facebook)
-  if (s.instagram) updateHref('[aria-label="Instagram"]', s.instagram)
-  if (s.linkedin)  updateHref('[aria-label="LinkedIn"]', s.linkedin)
-  if (s.tiktok)    updateHref('[aria-label="TikTok"]', s.tiktok)
-  if (s.youtube)   updateHref('[aria-label="YouTube"]', s.youtube)
-  if (s.x)         updateHref('[aria-label="X (Twitter)"]', s.x)
+  const links = { Facebook: s.facebook, Instagram: s.instagram, LinkedIn: s.linkedin, TikTok: s.tiktok, YouTube: s.youtube, 'X (Twitter)': s.x, X: s.x }
+  Object.entries(links).forEach(([label, href]) => {
+    if (href) document.querySelectorAll(`[aria-label="${label}"]`).forEach(el => el.href = href)
+  })
   document.querySelectorAll('.footer-contact-item span').forEach(el => {
-    if (s.email && el.textContent.includes('@')) el.textContent = s.email
-    if (s.phone && el.textContent.includes('Contact via')) el.textContent = s.phone
-    if (s.address && el.textContent.includes('Crewe')) el.textContent = s.address
+    if (s.email   && el.textContent.includes('@'))           el.textContent = s.email
+    if (s.phone   && el.textContent.includes('Contact via')) el.textContent = s.phone
+    if (s.address && el.textContent.includes('Crewe, Cheshire &')) el.textContent = s.address
   })
 }
 
-// ══════════════════════════════════════
-//   HOMEPAGE — all sections
-// ══════════════════════════════════════
+// ═══════════════════════════════════════════
+//  HOMEPAGE
+// ═══════════════════════════════════════════
 async function loadHomepage() {
   const [hp, projects, testimonials] = await Promise.all([
-    getHomepage(),
-    getFeaturedProjects(),
-    getTestimonials(true),
+    getHomepage(), getFeaturedProjects(), getTestimonials(true)
   ])
+  if (!hp) return
 
-  if (hp) {
-    applyHero(hp.hero)
-    applyHeroBadges(hp.heroBadges)
-    applyStats(hp.stats)
-    applyAboutSnippet(hp.aboutSnippet)
-    applyServicesSection(hp.servicesSection)
-    applyWhyChoose(hp.whyChoose)
-    applyProjectsSection(hp.projectsSection)
-    applyProcess(hp.process)
-    applyTestimonialsSection(hp.testimonialsSection)
-    applyCtaBanner(hp.ctaBanner)
-  }
-  if (projects?.length) applyFeaturedProjects(projects)
-  if (testimonials?.length) applyTestimonials(testimonials)
-}
-
-// ── HERO ──
-function applyHero(h) {
-  if (!h) return
-  if (h.eyebrow)    setText('.hero-eyebrow', h.eyebrow)
-  if (h.headingLine1 || h.headingLine2 || h.headingLine3) {
-    const h1 = document.querySelector('.hero h1')
-    if (h1) h1.innerHTML = `${h.headingLine1 || ''}<br><em>${h.headingLine2 || ''}</em><br>${h.headingLine3 || ''}`
-  }
-  if (h.subtext) setText('.hero > .container .hero-content p', h.subtext)
-  if (h.primaryButtonText) setText('.hero-actions .btn-primary', h.primaryButtonText)
-  if (h.secondaryButtonText) setText('.hero-actions .btn-outline', h.secondaryButtonText)
-  if (h.backgroundImage?.asset) {
-    const img = document.querySelector('.hero-bg img')
-    if (img) {
-      img.src = imageUrl(h.backgroundImage.asset._id, 1400)
-      img.alt = h.backgroundImage.alt || ''
+  // Hero
+  const h = hp.hero
+  if (h) {
+    if (h.eyebrow) setText('.hero-eyebrow', h.eyebrow)
+    if (h.headingLine1 || h.headingLine2 || h.headingLine3) {
+      const el = document.querySelector('.hero h1')
+      if (el) el.innerHTML = `${h.headingLine1||''}<br><em>${h.headingLine2||''}</em><br>${h.headingLine3||''}`
+    }
+    if (h.subtext) setText('.hero-content > p', h.subtext)
+    if (h.primaryButtonText)   setText('.hero-actions .btn-primary', h.primaryButtonText)
+    if (h.secondaryButtonText) setText('.hero-actions .btn-outline',  h.secondaryButtonText)
+    if (h.backgroundImage?.asset?._id) {
+      const img = document.querySelector('.hero-bg img')
+      if (img) { img.src = imageUrl(h.backgroundImage.asset._id, 1400); img.alt = h.backgroundImage.alt || '' }
     }
   }
-}
 
-// ── HERO BADGES ──
-function applyHeroBadges(badges) {
-  if (!badges?.length) return
-  const inner = document.querySelector('.hero-badges-inner')
-  if (!inner) return
-  inner.innerHTML = badges.map((b, i) => `
-    ${i > 0 ? '<div class="badge-divider"></div>' : ''}
-    <div class="badge-item">
-      <div class="badge-icon">${b.icon || '✓'}</div>
-      <div class="badge-text">
-        <strong>${b.title || ''}</strong>
-        <span>${b.subtitle || ''}</span>
-      </div>
-    </div>
-  `).join('')
-}
+  // Badges
+  if (hp.heroBadges?.length) {
+    const inner = document.querySelector('.hero-badges-inner')
+    if (inner) inner.innerHTML = hp.heroBadges.map((b,i) => `
+      ${i>0?'<div class="badge-divider"></div>':''}
+      <div class="badge-item">
+        <div class="badge-icon">${b.icon||'✓'}</div>
+        <div class="badge-text"><strong>${b.title||''}</strong><span>${b.subtitle||''}</span></div>
+      </div>`).join('')
+  }
 
-// ── STATS ──
-function applyStats(stats) {
-  if (!stats?.length) return
-  const cards = document.querySelectorAll('.stat-card')
-  stats.forEach((s, i) => {
-    if (!cards[i]) return
-    const num = cards[i].querySelector('.stat-number')
-    const label = cards[i].querySelector('.stat-label')
-    if (num && s.number) {
-      num.dataset.count = s.number
-      num.dataset.prefix = s.prefix || ''
-      num.dataset.suffix = s.suffix || ''
-      num.textContent = (s.prefix || '') + '0' + (s.suffix || '')
+  // Stats
+  if (hp.stats?.length) {
+    document.querySelectorAll('.stat-card').forEach((card, i) => {
+      const s = hp.stats[i]; if (!s) return
+      const num = card.querySelector('.stat-number')
+      const lbl = card.querySelector('.stat-label')
+      if (num) { num.dataset.count = s.number; num.dataset.prefix = s.prefix||''; num.dataset.suffix = s.suffix||''; num.textContent = (s.prefix||'')+'0'+(s.suffix||'') }
+      if (lbl && s.label) lbl.textContent = s.label
+    })
+  }
+
+  // About snippet
+  const a = hp.aboutSnippet
+  if (a) {
+    const grid = document.querySelector('.about-grid')
+    if (grid) {
+      if (a.label) { const el = grid.querySelector('.section-label'); if (el) el.textContent = a.label }
+      const title = grid.querySelector('.section-title')
+      if (title) title.innerHTML = `${a.headingMain||''} <em>${a.headingAccent||''}</em>`
+      const ps = grid.querySelectorAll('p[style]')
+      if (ps[0] && a.paragraph1) ps[0].textContent = a.paragraph1
+      if (ps[1] && a.paragraph2) ps[1].textContent = a.paragraph2
+      if (a.yearsExperience) { const b = grid.querySelector('.about-experience strong'); if (b) b.textContent = `${a.yearsExperience}+` }
+      if (a.highlights?.length) { const ul = grid.querySelector('.about-list'); if (ul) ul.innerHTML = a.highlights.map(h=>`<li>${h}</li>`).join('') }
+      if (a.buttonText) { const btn = grid.querySelector('.btn-dark'); if (btn) btn.textContent = a.buttonText }
+      if (a.mainImage?.asset?._id)  { const img = grid.querySelector('.about-img-main');  if (img) { img.src = imageUrl(a.mainImage.asset._id,1200);  img.alt = a.mainImage.alt||'' } }
+      if (a.accentImage?.asset?._id){ const img = grid.querySelector('.about-img-accent'); if (img) { img.src = imageUrl(a.accentImage.asset._id,800); img.alt = a.accentImage.alt||'' } }
     }
-    if (label && s.label) label.textContent = s.label
-  })
-}
-
-// ── ABOUT SNIPPET ──
-function applyAboutSnippet(a) {
-  if (!a) return
-  const section = document.querySelector('.about-grid')
-  if (!section) return
-  if (a.label) setText('.about-grid + div .section-label, .about-grid .section-label', a.label)
-
-  const title = section.closest('.section')?.querySelector('.section-title')
-  if (title && (a.headingMain || a.headingAccent)) {
-    title.innerHTML = `${a.headingMain || ''} <em>${a.headingAccent || ''}</em>`
   }
 
-  const paras = section.querySelectorAll('p[style]')
-  if (paras[0] && a.paragraph1) paras[0].textContent = a.paragraph1
-  if (paras[1] && a.paragraph2) paras[1].textContent = a.paragraph2
-
-  if (a.yearsExperience) {
-    const badge = section.querySelector('.about-experience strong')
-    if (badge) badge.textContent = `${a.yearsExperience}+`
+  // Services section heading
+  const sv = hp.servicesSection
+  if (sv) {
+    const sec = document.querySelector('.services-grid')?.closest('.section')
+    if (sec) {
+      setSectionHead(sec, sv.label, sv.headingMain, sv.headingAccent, sv.subtext)
+      if (sv.buttonText) { const btn = sec.querySelector('.btn-dark'); if (btn) btn.textContent = sv.buttonText }
+    }
   }
 
-  if (a.highlights?.length) {
-    const list = section.querySelector('.about-list')
-    if (list) list.innerHTML = a.highlights.map(h => `<li>${h}</li>`).join('')
+  // Why Choose
+  const wc = hp.whyChoose
+  if (wc) {
+    const sec = document.querySelector('.why-grid')?.closest('.section')
+    if (sec) {
+      setSectionHead(sec, wc.label, wc.headingMain, wc.headingAccent, wc.subtext)
+      if (wc.cards?.length) {
+        document.querySelectorAll('.why-card').forEach((card, i) => {
+          const c = wc.cards[i]; if (!c) return
+          const h3 = card.querySelector('h3'); const p = card.querySelector('p')
+          if (h3 && c.title) h3.textContent = c.title
+          if (p  && c.body)  p.textContent  = c.body
+        })
+      }
+    }
   }
 
-  if (a.buttonText) setText('.about-grid ~ * .btn-dark, .about-grid .btn-dark', a.buttonText)
-
-  if (a.mainImage?.asset) {
-    const img = section.querySelector('.about-img-main')
-    if (img) { img.src = imageUrl(a.mainImage.asset._id, 1200); img.alt = a.mainImage.alt || '' }
+  // Projects heading
+  const ps = hp.projectsSection
+  if (ps) {
+    const sec = document.querySelector('.projects-grid')?.closest('.section')
+    if (sec) setSectionHead(sec, ps.label, ps.headingMain, ps.headingAccent)
   }
-  if (a.accentImage?.asset) {
-    const img = section.querySelector('.about-img-accent')
-    if (img) { img.src = imageUrl(a.accentImage.asset._id, 800); img.alt = a.accentImage.alt || '' }
+
+  // Process
+  const pr = hp.process
+  if (pr) {
+    const sec = document.querySelector('.process-steps')?.closest('.section')
+    if (sec) {
+      setSectionHead(sec, pr.label, pr.headingMain, pr.headingAccent, pr.subtext)
+      if (pr.steps?.length) {
+        document.querySelectorAll('.process-step').forEach((step, i) => {
+          const s = pr.steps[i]; if (!s) return
+          const h3 = step.querySelector('h3'); const p = step.querySelector('p')
+          if (h3 && s.title)       h3.textContent = s.title
+          if (p  && s.description) p.textContent  = s.description
+        })
+      }
+    }
   }
-}
 
-// ── SERVICES SECTION HEADING ──
-function applyServicesSection(s) {
-  if (!s) return
-  const section = document.querySelector('.services-grid')?.closest('.section')
-  if (!section) return
-  const label = section.querySelector('.section-label')
-  const title = section.querySelector('.section-title')
-  const sub   = section.querySelector('.section-sub')
-  const btn   = section.querySelector('.btn-dark')
-  if (label && s.label) label.textContent = s.label
-  if (title && (s.headingMain || s.headingAccent)) title.innerHTML = `${s.headingMain || ''} <em>${s.headingAccent || ''}</em>`
-  if (sub && s.subtext) sub.textContent = s.subtext
-  if (btn && s.buttonText) btn.textContent = s.buttonText
-}
-
-// ── WHY CHOOSE ──
-function applyWhyChoose(w) {
-  if (!w) return
-  const section = document.querySelector('.why-grid')?.closest('.section')
-  if (!section) return
-  const label = section.querySelector('.section-label')
-  const title = section.querySelector('.section-title')
-  const sub   = section.querySelector('.section-sub')
-  if (label && w.label) label.textContent = w.label
-  if (title && (w.headingMain || w.headingAccent)) title.innerHTML = `${w.headingMain || ''} <em>${w.headingAccent || ''}</em>`
-  if (sub && w.subtext) sub.textContent = w.subtext
-
-  if (w.cards?.length) {
-    const cards = document.querySelectorAll('.why-card')
-    w.cards.forEach((c, i) => {
-      if (!cards[i]) return
-      const h3 = cards[i].querySelector('h3')
-      const p  = cards[i].querySelector('p')
-      if (h3 && c.title) h3.textContent = c.title
-      if (p  && c.body)  p.textContent  = c.body
-    })
+  // Testimonials heading
+  const ts = hp.testimonialsSection
+  if (ts) {
+    const sec = document.querySelector('.reviews-grid')?.closest('.section')
+    if (sec) setSectionHead(sec, ts.label, ts.headingMain, ts.headingAccent, ts.subtext)
   }
-}
 
-// ── PROJECTS SECTION HEADING ──
-function applyProjectsSection(p) {
-  if (!p) return
-  const section = document.querySelector('.projects-grid')?.closest('.section')
-  if (!section) return
-  const label = section.querySelector('.section-label')
-  const title = section.querySelector('.section-title')
-  if (label && p.label) label.textContent = p.label
-  if (title && (p.headingMain || p.headingAccent)) title.innerHTML = `${p.headingMain || ''} <em>${p.headingAccent || ''}</em>`
-}
+  // CTA banner
+  applyCta(hp.ctaBanner)
 
-// ── PROCESS ──
-function applyProcess(p) {
-  if (!p) return
-  const section = document.querySelector('.process-steps')?.closest('.section')
-  if (!section) return
-  const label = section.querySelector('.section-label')
-  const title = section.querySelector('.section-title')
-  const sub   = section.querySelector('.section-sub')
-  if (label && p.label) label.textContent = p.label
-  if (title && (p.headingMain || p.headingAccent)) title.innerHTML = `${p.headingMain || ''} <em>${p.headingAccent || ''}</em>`
-  if (sub && p.subtext) sub.textContent = p.subtext
-
-  if (p.steps?.length) {
-    const steps = document.querySelectorAll('.process-step')
-    p.steps.forEach((s, i) => {
-      if (!steps[i]) return
-      const h3 = steps[i].querySelector('h3')
-      const pp = steps[i].querySelector('p')
-      if (h3 && s.title) h3.textContent = s.title
-      if (pp && s.description) pp.textContent = s.description
-    })
-  }
-}
-
-// ── TESTIMONIALS SECTION HEADING ──
-function applyTestimonialsSection(t) {
-  if (!t) return
-  const section = document.querySelector('.reviews-grid')?.closest('.section')
-  if (!section) return
-  const label = section.querySelector('.section-label')
-  const title = section.querySelector('.section-title')
-  const sub   = section.querySelector('.section-sub')
-  if (label && t.label) label.textContent = t.label
-  if (title && (t.headingMain || t.headingAccent)) title.innerHTML = `${t.headingMain || ''} <em>${t.headingAccent || ''}</em>`
-  if (sub && t.subtext) sub.textContent = t.subtext
-}
-
-// ── CTA BANNER ──
-function applyCtaBanner(c) {
-  if (!c) return
-  const banner = document.querySelector('.cta-banner')
-  if (!banner) return
-  if (c.heading) setText('.cta-banner h2', c.heading)
-  if (c.subtext) setText('.cta-banner p', c.subtext)
-  if (c.primaryButtonText)   setText('.cta-banner .btn-primary', c.primaryButtonText)
-  if (c.secondaryButtonText) setText('.cta-banner .btn-outline', c.secondaryButtonText)
-}
-
-// ── FEATURED PROJECTS ──
-function applyFeaturedProjects(projects) {
-  const grid = document.querySelector('.projects-grid')
-  if (!grid) return
-  grid.innerHTML = projects.map((p, i) => `
-    <div class="project-card ${i === 0 ? 'featured' : ''}" data-reveal ${i > 0 ? `data-reveal-delay="${i}"` : ''}>
-      <img src="${imageUrl(p.mainImage?.asset?._id, 900)}" alt="${p.mainImage?.alt || p.title}" loading="lazy" />
-      <div class="project-overlay">
-        <span class="project-tag">${categoryLabel(p.category)}</span>
-        <h3>${p.title}</h3>
-        <p>${p.location || ''}</p>
-      </div>
-    </div>
-  `).join('')
-}
-
-// ── TESTIMONIALS ──
-function applyTestimonials(testimonials) {
-  const grid = document.querySelector('.reviews-grid')
-  if (!grid) return
-  grid.innerHTML = testimonials.slice(0,3).map((t, i) => `
-    <div class="review-card" data-reveal data-reveal-delay="${i+1}">
-      <div class="stars">${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</div>
-      <p class="review-text">${t.review}</p>
-      <div class="review-author">
-        <div class="author-avatar">${t.name.charAt(0)}</div>
-        <div>
-          <div class="author-name">${t.name}</div>
-          <div class="author-location">${t.location || ''}</div>
+  // Featured projects
+  if (projects?.length) {
+    const grid = document.querySelector('.projects-grid')
+    if (grid) grid.innerHTML = projects.map((p,i) => `
+      <div class="project-card ${i===0?'featured':''}" data-reveal ${i>0?`data-reveal-delay="${i}"`:''}> 
+        <img src="${imageUrl(p.mainImage?.asset?._id,900)}" alt="${p.mainImage?.alt||p.title}" loading="lazy"/>
+        <div class="project-overlay">
+          <span class="project-tag">${catLabel(p.category)}</span>
+          <h3>${p.title}</h3>
+          <p>${p.location||''}</p>
         </div>
-      </div>
-    </div>
-  `).join('')
+      </div>`).join('')
+  }
+
+  // Testimonials
+  if (testimonials?.length) {
+    const grid = document.querySelector('.reviews-grid')
+    if (grid) grid.innerHTML = testimonials.slice(0,3).map((t,i) => `
+      <div class="review-card" data-reveal data-reveal-delay="${i+1}">
+        <div class="stars">${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</div>
+        <p class="review-text">${t.review}</p>
+        <div class="review-author">
+          <div class="author-avatar">${t.name.charAt(0)}</div>
+          <div><div class="author-name">${t.name}</div><div class="author-location">${t.location||''}</div></div>
+        </div>
+      </div>`).join('')
+  }
 }
 
-// ══════════════════════════════════════
-//   ABOUT PAGE
-// ══════════════════════════════════════
+// ═══════════════════════════════════════════
+//  ABOUT PAGE
+// ═══════════════════════════════════════════
 async function loadAbout() {
-  const about = await getAbout()
-  if (!about) return
-  setText('.section-title em', about.headline)
-  const paras = document.querySelectorAll('.about-grid p')
-  if (paras[0] && about.intro) paras[0].textContent = about.intro
-  if (paras[1] && about.body)  paras[1].textContent = about.body
-  if (about.yearsExperience) {
-    const badge = document.querySelector('.about-experience strong')
-    if (badge) badge.textContent = `${about.yearsExperience}+`
+  const d = await getAboutPage()
+  if (!d) return
+
+  // Page hero
+  if (d.pageHero) {
+    const h1 = document.querySelector('.page-hero h1')
+    if (h1) h1.innerHTML = `${d.pageHero.headingMain||'About'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Mikes Constructions'}</em>`
   }
-  if (about.mainImage?.asset) {
-    const img = document.querySelector('.about-img-main')
-    if (img) { img.src = imageUrl(about.mainImage.asset._id, 1200); img.alt = about.mainImage.alt || '' }
+
+  // Story
+  const s = d.story
+  if (s) {
+    const label = document.querySelector('.section-label')
+    const title = document.querySelector('.section-title')
+    if (label && s.label) label.textContent = s.label
+    if (title) title.innerHTML = `${s.headingMain||''} <em>${s.headingAccent||''}</em>`
+    const ps = document.querySelectorAll('.about-grid > div:last-child p[style]')
+    if (ps[0] && s.paragraph1) ps[0].textContent = s.paragraph1
+    if (ps[1] && s.paragraph2) ps[1].textContent = s.paragraph2
+    if (ps[2] && s.paragraph3) ps[2].textContent = s.paragraph3
+    if (s.yearsExperience) { const b = document.querySelector('.about-experience strong'); if (b) b.textContent = `${s.yearsExperience}+` }
+    if (s.mainImage?.asset?._id)  { const img = document.querySelector('.about-img-main');  if (img) { img.src = imageUrl(s.mainImage.asset._id,1200);  img.alt = s.mainImage.alt||'' } }
+    if (s.accentImage?.asset?._id){ const img = document.querySelector('.about-img-accent'); if (img) { img.src = imageUrl(s.accentImage.asset._id,800); img.alt = s.accentImage.alt||'' } }
   }
-  if (about.accentImage?.asset) {
-    const img = document.querySelector('.about-img-accent')
-    if (img) { img.src = imageUrl(about.accentImage.asset._id, 800); img.alt = about.accentImage.alt || '' }
+
+  // Commitment
+  const c = d.commitment
+  if (c) {
+    const sec = document.querySelector('.section-light .container > div')
+    if (sec) {
+      const lbl = sec.querySelector('.section-label')
+      const ttl = sec.querySelector('.section-title')
+      const ps  = sec.querySelectorAll('p')
+      if (lbl && c.label) lbl.textContent = c.label
+      if (ttl) ttl.innerHTML = `${c.headingMain||''} <em>${c.headingAccent||''}</em>`
+      if (ps[0] && c.paragraph1) ps[0].textContent = c.paragraph1
+      if (ps[1] && c.paragraph2) ps[1].textContent = c.paragraph2
+    }
   }
-  if (about.highlights?.length) {
-    const list = document.querySelector('.about-list')
-    if (list) list.innerHTML = about.highlights.map(h => `<li>${h}</li>`).join('')
+
+  // Why Choose
+  const wc = d.whyChoose
+  if (wc) {
+    const sec = document.querySelector('.why-grid')?.closest('.section')
+    if (sec) {
+      setSectionHead(sec, wc.label, wc.headingMain, wc.headingAccent)
+      if (wc.reasons?.length) {
+        document.querySelectorAll('.why-card').forEach((card, i) => {
+          const r = wc.reasons[i]; if (!r) return
+          const h3 = card.querySelector('h3'); const p = card.querySelector('p')
+          if (h3 && r.title) h3.textContent = r.title
+          if (p  && r.body)  p.textContent  = r.body
+        })
+      }
+    }
   }
+
+  // Featured testimonial
+  const ft = d.featuredTestimonial
+  if (ft) {
+    const quoteEl = document.querySelector('.section .container > div > div p[style*="17px"]')
+    const nameEl  = document.querySelector('.section .container > div > div div[style*="font-weight:700"]')
+    const locEl   = document.querySelector('.section .container > div > div div[style*="color:var(--grey)"]')
+    if (quoteEl && ft.quote) quoteEl.textContent = ft.quote
+    if (nameEl  && ft.name)  nameEl.textContent  = ft.name
+    if (locEl   && ft.location) locEl.textContent = ft.location
+  }
+
+  // CTA
+  applyCta(d.ctaBanner)
 }
 
-// ══════════════════════════════════════
-//   PROJECTS PAGE
-// ══════════════════════════════════════
+// ═══════════════════════════════════════════
+//  SERVICES PAGE
+// ═══════════════════════════════════════════
+async function loadServices() {
+  const d = await getServicesPage()
+  if (!d) return
+
+  if (d.pageHero) {
+    const h1 = document.querySelector('.page-hero h1')
+    if (h1) h1.innerHTML = `${d.pageHero.headingMain||'Our'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Services'}</em>`
+  }
+
+  if (d.introText) {
+    const p = document.querySelector('.section-sm p[data-reveal]')
+    if (p) p.textContent = d.introText
+  }
+
+  if (d.services?.length) {
+    const sections = document.querySelectorAll('.about-grid')
+    d.services.forEach((s, i) => {
+      const grid = sections[i]; if (!grid) return
+      const iconEl = grid.querySelector('.service-icon')
+      const lbl    = grid.querySelector('.section-label')
+      const title  = grid.querySelector('.section-title')
+      const ps     = grid.querySelectorAll('p[style]')
+      const imgs   = grid.querySelectorAll('img')
+      if (iconEl && s.icon) iconEl.textContent = s.icon
+      if (lbl    && s.label) lbl.textContent  = s.label
+      if (title)  title.innerHTML = `${s.headingMain||''} <em>${s.headingAccent||''}</em>`
+      if (ps[0] && s.paragraph1) ps[0].textContent = s.paragraph1
+      if (ps[1] && s.paragraph2) ps[1].textContent = s.paragraph2
+      if (s.mainImage?.asset?._id  && imgs[0]) { imgs[0].src = imageUrl(s.mainImage.asset._id,1200);  imgs[0].alt = s.mainImage.alt||'' }
+      if (s.accentImage?.asset?._id && imgs[1]) { imgs[1].src = imageUrl(s.accentImage.asset._id,800); imgs[1].alt = s.accentImage.alt||'' }
+    })
+  }
+
+  applyCta(d.ctaBanner)
+}
+
+// ═══════════════════════════════════════════
+//  PROJECTS PAGE
+// ═══════════════════════════════════════════
 async function loadProjects() {
-  const projects = await getProjects()
-  if (!projects?.length) return
-  const grid = document.querySelector('.gallery-grid')
-  if (!grid) return
-  grid.innerHTML = projects.map((p, i) => `
-    <div class="gallery-item" data-reveal data-reveal-delay="${(i%3)+1}">
-      <img src="${imageUrl(p.mainImage?.asset?._id, 800)}" alt="${p.mainImage?.alt || p.title}" loading="lazy" />
-      <div class="gallery-caption">
-        <div>
-          <div class="project-tag" style="margin:0 auto 8px;display:inline-block">${categoryLabel(p.category)}</div>
-          <p>${p.title}${p.location ? ' — '+p.location : ''}</p>
-          ${p.status==='ongoing' ? '<p style="color:var(--accent);font-size:11px;margin-top:4px">🔨 Ongoing</p>' : ''}
+  const [d, projects] = await Promise.all([ getProjectsPage(), getProjects() ])
+
+  if (d?.pageHero) {
+    const h1 = document.querySelector('.page-hero h1')
+    if (h1) h1.innerHTML = `${d.pageHero.headingMain||'Our Recent'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Projects'}</em>`
+  }
+
+  if (projects?.length) {
+    const grid = document.querySelector('.gallery-grid')
+    if (grid) grid.innerHTML = projects.map((p, i) => `
+      <div class="gallery-item" data-reveal data-reveal-delay="${(i%3)+1}">
+        <img src="${imageUrl(p.mainImage?.asset?._id,800)}" alt="${p.mainImage?.alt||p.title}" loading="lazy"/>
+        <div class="gallery-caption">
+          <div>
+            <div class="project-tag" style="margin:0 auto 8px;display:inline-block">${catLabel(p.category)}</div>
+            <p>${p.title}${p.location?' — '+p.location:''}</p>
+            ${p.status==='ongoing'?'<p style="color:var(--accent);font-size:11px;margin-top:4px">🔨 Ongoing</p>':''}
+          </div>
         </div>
-      </div>
-    </div>
-  `).join('')
+      </div>`).join('')
+  }
+
+  if (d?.ctaBanner) {
+    setText('.cta-banner h2', d.ctaBanner.heading)
+    setText('.cta-banner p',  d.ctaBanner.subtext)
+    setText('.cta-banner .btn-primary', d.ctaBanner.buttonText)
+  }
 }
 
-// ══════════════════════════════════════
-//   BLOG PAGE
-// ══════════════════════════════════════
+// ═══════════════════════════════════════════
+//  CONTACT PAGE
+// ═══════════════════════════════════════════
+async function loadContact() {
+  const d = await getContactPage()
+  if (!d) return
+
+  if (d.pageHero) {
+    const h1 = document.querySelector('.page-hero h1')
+    if (h1) h1.innerHTML = `${d.pageHero.headingMain||'Get in'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Touch'}</em>`
+  }
+
+  const intro = d.intro
+  if (intro) {
+    const lbl = document.querySelector('.contact-grid .section-label')
+    const ttl = document.querySelector('.contact-grid .section-title')
+    const p   = document.querySelector('.contact-grid > div > p[style*="margin-bottom:40px"]')
+    if (lbl && intro.label) lbl.textContent = intro.label
+    if (ttl) ttl.innerHTML = `${intro.headingMain||''} <em>${intro.headingAccent||''}</em>`
+    if (p && intro.paragraph) p.textContent = intro.paragraph
+  }
+
+  const cd = d.contactDetails
+  if (cd) {
+    const items = document.querySelectorAll('.contact-info-item span')
+    if (items[0] && cd.serviceArea)   items[0].innerHTML = cd.serviceArea
+    if (items[1] && cd.email)         items[1].textContent = cd.email
+    if (items[2] && cd.workingHours)  items[2].innerHTML = `${cd.workingHours}${cd.workingHours2?'<br>'+cd.workingHours2:''}`
+  }
+
+  if (d.nextSteps?.length) {
+    const ol = document.querySelector('.contact-grid ol')
+    if (ol) ol.innerHTML = d.nextSteps.map(step => `<li style="margin-bottom:0">${step}</li>`).join('')
+  }
+
+  if (d.locationsSection) {
+    const sec = document.querySelector('.locations-grid')?.closest('.section')
+    if (sec) setSectionHead(sec, d.locationsSection.label, d.locationsSection.headingMain, d.locationsSection.headingAccent, d.locationsSection.subtext)
+  }
+
+  if (d.locations?.length) {
+    const grid = document.querySelector('.locations-grid')
+    if (grid) grid.innerHTML = d.locations.map((loc, i) => `
+      <div class="location-card" data-reveal data-reveal-delay="${(i%3)+1}">
+        <div class="location-icon">${loc.icon||'🏘'}</div>
+        <h3>${loc.title||''}</h3>
+        <p>${loc.description||''}</p>
+      </div>`).join('')
+  }
+}
+
+// ═══════════════════════════════════════════
+//  FAQ PAGE
+// ═══════════════════════════════════════════
+async function loadFaq() {
+  const d = await getFaqPage()
+  if (!d) return
+
+  if (d.pageHero) {
+    const h1 = document.querySelector('.page-hero h1')
+    if (h1) h1.innerHTML = `${d.pageHero.headingMain||'Frequently Asked'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Questions'}</em>`
+  }
+
+  if (d.sideLabel)          setText('.section .section-label', d.sideLabel)
+  if (d.sideHeadingMain || d.sideHeadingAccent) {
+    const ttl = document.querySelector('.section .section-title')
+    if (ttl) ttl.innerHTML = `${d.sideHeadingMain||''} <em>${d.sideHeadingAccent||''}</em>`
+  }
+  if (d.sideParagraph) {
+    const p = document.querySelector('.section [data-reveal] > p[style]')
+    if (p) p.textContent = d.sideParagraph
+  }
+
+  if (d.faqs?.length) {
+    const list = document.querySelector('.faq-list')
+    if (list) list.innerHTML = d.faqs.map((faq, i) => `
+      <div class="faq-item ${i===0?'open':''}">
+        <div class="faq-question">
+          <h3>${faq.question}</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer"><p>${faq.answer}</p></div>
+      </div>`).join('')
+  }
+
+  if (d.ctaBanner) {
+    setText('.cta-banner h2', d.ctaBanner.heading)
+    setText('.cta-banner p',  d.ctaBanner.subtext)
+    setText('.cta-banner .btn-primary', d.ctaBanner.buttonText)
+  }
+}
+
+// ═══════════════════════════════════════════
+//  BLOG PAGE
+// ═══════════════════════════════════════════
 async function loadBlog() {
   const posts = await getPosts(12)
   if (!posts?.length) return
@@ -389,59 +475,47 @@ async function loadBlog() {
   grid.innerHTML = posts.map((p, i) => `
     <div class="blog-card" data-reveal data-reveal-delay="${(i%3)+1}">
       <div class="blog-img">
-        <img src="${imageUrl(p.coverImage?.asset?._id, 600)}" alt="${p.coverImage?.alt || p.title}" loading="lazy" />
+        <img src="${imageUrl(p.coverImage?.asset?._id,600)}" alt="${p.coverImage?.alt||p.title}" loading="lazy"/>
       </div>
       <div class="blog-body">
         <div class="blog-meta">
-          <span class="blog-tag">${p.category || 'News'}</span>
-          <span class="blog-date">${formatDate(p.publishedAt)}</span>
+          <span class="blog-tag">${p.category||'News'}</span>
+          <span class="blog-date">${fmtDate(p.publishedAt)}</span>
         </div>
         <h3>${p.title}</h3>
-        <p>${p.excerpt}</p>
+        <p>${p.excerpt||''}</p>
         <a href="post.html?slug=${p.slug?.current}" class="blog-read">Read More →</a>
       </div>
-    </div>
-  `).join('')
+    </div>`).join('')
 }
 
-// ══════════════════════════════════════
-//   SERVICES PAGE
-// ══════════════════════════════════════
-async function loadServices() {
-  const services = await getServices()
-  if (!services?.length) return
-  services.forEach((s, i) => {
-    const imgs = document.querySelectorAll('.about-img-main')
-    if (imgs[i] && s.mainImage?.asset) {
-      imgs[i].src = imageUrl(s.mainImage.asset._id, 1200)
-      imgs[i].alt = s.mainImage.alt || s.title
-    }
-    const h2s = document.querySelectorAll('.about-grid .section-title em')
-    if (h2s[i] && s.title) h2s[i].textContent = s.title
-    const descs = document.querySelectorAll('.about-grid p[style]')
-    if (descs[i*2] && s.shortDescription) descs[i*2].textContent = s.shortDescription
-  })
+// ═══════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════
+function setText(sel, text) { const el = document.querySelector(sel); if (el && text) el.textContent = text }
+
+function setSectionHead(sec, label, main, accent, sub) {
+  const lbl = sec.querySelector('.section-label')
+  const ttl = sec.querySelector('.section-title')
+  const sub_el = sec.querySelector('.section-sub')
+  if (lbl && label)  lbl.textContent = label
+  if (ttl && (main || accent)) ttl.innerHTML = `${main||''} <em>${accent||''}</em>`
+  if (sub_el && sub) sub_el.textContent = sub
 }
 
-// ══════════════════════════════════════
-//   HELPERS
-// ══════════════════════════════════════
-function setText(selector, text) {
-  const el = document.querySelector(selector)
-  if (el && text) el.textContent = text
+function applyCta(cta) {
+  if (!cta) return
+  if (cta.heading)             setText('.cta-banner h2', cta.heading)
+  if (cta.subtext)             setText('.cta-banner > .container > p', cta.subtext)
+  if (cta.primaryButtonText)   setText('.cta-banner .btn-primary', cta.primaryButtonText)
+  if (cta.secondaryButtonText) setText('.cta-banner .btn-outline',  cta.secondaryButtonText)
 }
-function updateHref(selector, href) {
-  document.querySelectorAll(selector).forEach(el => { if (href) el.href = href })
-}
-function formatDate(d) {
+
+function fmtDate(d) {
   if (!d) return ''
   return new Date(d).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 }
-function categoryLabel(cat) {
-  const map = {
-    renovation:'Full Renovation', bathroom:'Bathroom', kitchen:'Kitchen',
-    structural:'Structural', loft:'Loft / Basement', commercial:'Commercial',
-    tiling:'Tiling', electrical:'Electrical', plumbing:'Plumbing'
-  }
-  return map[cat] || cat || 'Project'
+
+function catLabel(cat) {
+  return { renovation:'Full Renovation', bathroom:'Bathroom', kitchen:'Kitchen', structural:'Structural', loft:'Loft / Basement', commercial:'Commercial', tiling:'Tiling', electrical:'Electrical', plumbing:'Plumbing' }[cat] || cat || 'Project'
 }
