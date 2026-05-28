@@ -4,39 +4,40 @@
       {
         "fields": [
           {
-            "description": "Small text above headline e.g. \"Established Excellence\"",
-            "name": "eyebrow",
-            "type": "string",
-            "title": "Eyebrow Text"
-          },
-          {
-            "description": "e.g. \"Welcome to\"",
+            "placeholder": "e.g. Welcome to",
+            "initialValue": "Welcome to",
             "name": "headingLine1",
             "type": "string"
           },
           {
-            "description": "e.g. \"Mikes Constructions\"",
+            "placeholder": "e.g. Mikes Constructions",
+            "initialValue": "Mikes Constructions",
             "name": "headingLine2",
             "type": "string",
-            "title": "Heading Line 2 (gold)"
+            "title": "Heading Line 2 (shown in gold)"
           },
           {
-            "description": "e.g. \"Group Ltd\"",
+            "placeholder": "e.g. Group Ltd",
+            "initialValue": "Group Ltd",
             "name": "headingLine3",
             "type": "string"
           },
           {
             "rows": 2,
+            "placeholder": "e.g. Your Trusted Partner in Construction and Refurbishment across Crewe, Cheshire and the North West.",
+            "initialValue": "Your Trusted Partner in Construction and Refurbishment across Crewe, Cheshire and the North West.",
             "name": "subtext",
             "type": "text",
             "title": "Subtext Paragraph"
           },
           {
+            "placeholder": "e.g. Get a Free Quote",
             "initialValue": "Get a Free Quote",
             "name": "primaryButtonText",
             "type": "string"
           },
           {
+            "placeholder": "e.g. View Services",
             "initialValue": "View Services",
             "name": "secondaryButtonText",
             "type": "string"
@@ -45,8 +46,10 @@
             "options": {
               "hotspot": true
             },
+            "description": "Upload a high-quality landscape photo of your work. Recommended: at least 1400px wide.",
             "fields": [
               {
+                "initialValue": "Mikes Constructions project",
                 "name": "alt",
                 "type": "string",
                 "title": "Alt text"
@@ -62,6 +65,28 @@
         "title": "🎯 Hero Section"
       },
       {
+        "initialValue": [
+          {
+            "icon": "✓",
+            "title": "Fully Licensed",
+            "subtitle": "Accredited & Insured"
+          },
+          {
+            "icon": "★",
+            "title": "5-Star Rated",
+            "subtitle": "Google Reviews"
+          },
+          {
+            "icon": "🏗",
+            "title": "Expert Craftsmen",
+            "subtitle": "Decades of Experience"
+          },
+          {
+            "icon": "💬",
+            "title": "Client-Focused",
+            "subtitle": "Your Vision, Our Mission"
+          }
+        ],
         "validation": [
           {
             "level": "error",
@@ -73,21 +98,27 @@
             ]
           }
         ],
-        "description": "The 4 trust badges at the bottom of the hero",
+        "description": "The 4 trust badges at the bottom of the hero section. Keep to exactly 4.",
         "of": [
           {
             "fields": [
               {
+                "placeholder": "e.g. ✓ or ★ or 🏗",
+                "initialValue": "✓",
                 "name": "icon",
                 "type": "string",
                 "title": "Icon (emoji)"
               },
               {
+                "placeholder": "e.g. Fully Licensed",
+                "initialValue": "Fully Licensed",
                 "name": "title",
                 "type": "string",
                 "title": "Bold Title"
               },
               {
+                "placeholder": "e.g. Accredited & Insured",
+                "initialValue": "Accredited & Insured",
                 "name": "subtitle",
                 "type": "string"
               }
@@ -97,9 +128,31 @@
         ],
         "name": "heroBadges",
         "type": "array",
-        "title": "🏅 Hero Trust Badges"
+        "title": "🏅 Trust Badges (bottom of hero)"
       },
       {
+        "initialValue": [
+          {
+            "number": 200,
+            "suffix": "+",
+            "label": "Projects Completed"
+          },
+          {
+            "number": 15,
+            "suffix": "+",
+            "label": "Years of Experience"
+          },
+          {
+            "number": 100,
+            "suffix": "%",
+            "label": "Client Satisfaction"
+          },
+          {
+            "number": 5,
+            "prefix": "★ ",
+            "label": "Google Star Rating"
+          }
+        ],
         "validation": [
           {
             "level": "error",
@@ -111,30 +164,32 @@
             ]
           }
         ],
-        "description": "The 4 number stats below the hero",
+        "description": "The 4 animated number stats below the hero. Keep to exactly 4.",
         "of": [
           {
             "fields": [
               {
+                "placeholder": "e.g. 200",
                 "name": "number",
                 "type": "number"
               },
               {
-                "description": "e.g. \"★ \"",
+                "placeholder": "e.g. ★ — leave blank if none",
                 "name": "prefix",
                 "type": "string",
                 "title": "Prefix (before number)"
               },
               {
-                "description": "e.g. \"+\" or \"%\"",
+                "placeholder": "e.g. + or %",
                 "name": "suffix",
                 "type": "string",
                 "title": "Suffix (after number)"
               },
               {
-                "description": "e.g. \"Projects Completed\"",
+                "placeholder": "e.g. Projects Completed",
                 "name": "label",
-                "type": "string"
+                "type": "string",
+                "title": "Label below number"
               }
             ],
             "type": "object"
@@ -142,41 +197,55 @@
         ],
         "name": "stats",
         "type": "array",
-        "title": "📊 Stats Bar"
+        "title": "📊 Stats Bar (4 numbers)"
       },
       {
         "fields": [
           {
-            "description": "e.g. \"Our Heritage\"",
+            "placeholder": "e.g. Our Heritage",
+            "initialValue": "Our Heritage",
             "name": "label",
             "type": "string",
-            "title": "Section Label"
+            "title": "Section Label (small gold text)"
           },
           {
-            "description": "e.g. \"About Our\"",
+            "placeholder": "e.g. About Our",
+            "initialValue": "About Our",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white part)"
           },
           {
-            "description": "e.g. \"Craftsmanship\"",
+            "placeholder": "e.g. Craftsmanship",
+            "initialValue": "Craftsmanship",
             "name": "headingAccent",
             "type": "string",
             "title": "Heading (gold part)"
           },
           {
             "rows": 3,
+            "placeholder": "e.g. Mike's Constructions Group Ltd is built on a foundation of integrity...",
+            "initialValue": "Mike's Constructions Group Ltd is built on a foundation of integrity and architectural permanence. We specialise in high-end residential and commercial refurbishments across Crewe, Cheshire and the surrounding areas.",
             "name": "paragraph1",
             "type": "text",
             "title": "First Paragraph"
           },
           {
             "rows": 3,
+            "placeholder": "e.g. From initial structural transformations...",
+            "initialValue": "From initial structural transformations to the final bespoke finish, our team ensures every detail reflects the quality and craftsmanship our clients expect. We don't just build spaces — we craft environments that stand the test of time.",
             "name": "paragraph2",
             "type": "text",
             "title": "Second Paragraph"
           },
           {
+            "initialValue": [
+              "Residential Excellence — dream homes delivered to specification",
+              "Commercial Fit-outs — professional spaces built right",
+              "Full Project Management — from design to final handover",
+              "Fully Licensed & Insured — total peace of mind"
+            ],
+            "placeholder": "Add a checklist item — e.g. Fully Licensed & Insured",
             "of": [
               {
                 "type": "string"
@@ -187,15 +256,17 @@
             "title": "Checklist Items"
           },
           {
+            "placeholder": "e.g. Discover Our Story",
             "initialValue": "Discover Our Story",
             "name": "buttonText",
             "type": "string"
           },
           {
+            "placeholder": "e.g. 15",
             "initialValue": 15,
             "name": "yearsExperience",
             "type": "number",
-            "title": "Years Experience Badge"
+            "title": "Years Experience (number only)"
           },
           {
             "options": {
@@ -203,6 +274,7 @@
             },
             "fields": [
               {
+                "initialValue": "Mikes Constructions team",
                 "name": "alt",
                 "type": "string",
                 "title": "Alt text"
@@ -210,7 +282,7 @@
             ],
             "name": "mainImage",
             "type": "image",
-            "title": "Main Photo"
+            "title": "Main Team Photo"
           },
           {
             "options": {
@@ -218,6 +290,7 @@
             },
             "fields": [
               {
+                "initialValue": "Construction work",
                 "name": "alt",
                 "type": "string",
                 "title": "Alt text"
@@ -225,28 +298,31 @@
             ],
             "name": "accentImage",
             "type": "image",
-            "title": "Accent Photo (small overlay)"
+            "title": "Accent Photo (smaller overlay image)"
           }
         ],
         "name": "aboutSnippet",
         "type": "object",
-        "title": "👷 About Section (Homepage)"
+        "title": "👷 About Section"
       },
       {
         "fields": [
           {
+            "placeholder": "e.g. What We Do",
             "initialValue": "What We Do",
             "name": "label",
             "type": "string",
             "title": "Section Label"
           },
           {
+            "placeholder": "e.g. Our",
             "initialValue": "Our",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white)"
           },
           {
+            "placeholder": "e.g. Services",
             "initialValue": "Services",
             "name": "headingAccent",
             "type": "string",
@@ -254,10 +330,14 @@
           },
           {
             "rows": 2,
+            "placeholder": "e.g. We offer a comprehensive range of construction and refurbishment services...",
+            "initialValue": "We offer a comprehensive range of construction and refurbishment services tailored to every project and budget.",
             "name": "subtext",
-            "type": "text"
+            "type": "text",
+            "title": "Subtext below heading"
           },
           {
+            "placeholder": "e.g. View All Services",
             "initialValue": "View All Services",
             "name": "buttonText",
             "type": "string"
@@ -270,18 +350,21 @@
       {
         "fields": [
           {
+            "placeholder": "e.g. Why Us",
             "initialValue": "Why Us",
             "name": "label",
             "type": "string",
             "title": "Section Label"
           },
           {
+            "placeholder": "e.g. Why Choose",
             "initialValue": "Why Choose",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white)"
           },
           {
+            "placeholder": "e.g. Mikes Constructions",
             "initialValue": "Mikes Constructions",
             "name": "headingAccent",
             "type": "string",
@@ -289,10 +372,30 @@
           },
           {
             "rows": 2,
+            "placeholder": "e.g. We know that choosing the right contractor is crucial...",
+            "initialValue": "We know that choosing the right contractor is crucial. Here's why hundreds of clients across Crewe trust us.",
             "name": "subtext",
             "type": "text"
           },
           {
+            "initialValue": [
+              {
+                "title": "Expertise & Experience",
+                "body": "Decades of combined industry leadership. Our team brings technical mastery and creative problem-solving to every project, large or small."
+              },
+              {
+                "title": "Quality Craftsmanship",
+                "body": "We use premium materials and precision techniques on every square inch. Our pride in our work is reflected in the results we deliver."
+              },
+              {
+                "title": "Client-Centred Approach",
+                "body": "Clear communication, transparent pricing and your satisfaction at every stage. Your vision and timeline are always our priority."
+              },
+              {
+                "title": "Fully Licensed & Insured",
+                "body": "Accredited by leading industry bodies and fully insured. Every project is managed professionally for your complete peace of mind."
+              }
+            ],
             "validation": [
               {
                 "level": "error",
@@ -308,14 +411,17 @@
               {
                 "fields": [
                   {
+                    "placeholder": "e.g. Expertise & Experience",
                     "name": "title",
-                    "type": "string"
+                    "type": "string",
+                    "title": "Card Title"
                   },
                   {
                     "rows": 2,
+                    "placeholder": "e.g. Decades of combined industry leadership...",
                     "name": "body",
                     "type": "text",
-                    "title": "Description"
+                    "title": "Card Description"
                   }
                 ],
                 "type": "object"
@@ -323,7 +429,7 @@
             ],
             "name": "cards",
             "type": "array",
-            "title": "Reason Cards"
+            "title": "Reason Cards (4 cards)"
           }
         ],
         "name": "whyChoose",
@@ -333,18 +439,21 @@
       {
         "fields": [
           {
+            "placeholder": "e.g. Portfolio",
             "initialValue": "Portfolio",
             "name": "label",
             "type": "string",
             "title": "Section Label"
           },
           {
+            "placeholder": "e.g. Our Recent",
             "initialValue": "Our Recent",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white)"
           },
           {
+            "placeholder": "e.g. Projects",
             "initialValue": "Projects",
             "name": "headingAccent",
             "type": "string",
@@ -358,18 +467,21 @@
       {
         "fields": [
           {
+            "placeholder": "e.g. How It Works",
             "initialValue": "How It Works",
             "name": "label",
             "type": "string",
             "title": "Section Label"
           },
           {
+            "placeholder": "e.g. Our Simple",
             "initialValue": "Our Simple",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white)"
           },
           {
+            "placeholder": "e.g. Process",
             "initialValue": "Process",
             "name": "headingAccent",
             "type": "string",
@@ -377,10 +489,30 @@
           },
           {
             "rows": 2,
+            "placeholder": "e.g. From first contact to final handover...",
+            "initialValue": "From first contact to final handover, we make your experience seamless and stress-free.",
             "name": "subtext",
             "type": "text"
           },
           {
+            "initialValue": [
+              {
+                "title": "Get in Touch",
+                "description": "Fill in our enquiry form or call us to tell us about your project — no obligation."
+              },
+              {
+                "title": "Free Site Visit",
+                "description": "We visit to understand your goals, assess the space and discuss your vision in detail."
+              },
+              {
+                "title": "Detailed Quote",
+                "description": "We provide a transparent, itemised quote with a clear timeline — no hidden costs."
+              },
+              {
+                "title": "We Build It",
+                "description": "Our expert team gets to work, keeping you informed every step of the way until handover."
+              }
+            ],
             "validation": [
               {
                 "level": "error",
@@ -396,12 +528,14 @@
               {
                 "fields": [
                   {
+                    "placeholder": "e.g. Get in Touch",
                     "name": "title",
                     "type": "string",
                     "title": "Step Title"
                   },
                   {
                     "rows": 2,
+                    "placeholder": "e.g. Fill in our enquiry form or call us...",
                     "name": "description",
                     "type": "text",
                     "title": "Step Description"
@@ -412,7 +546,7 @@
             ],
             "name": "steps",
             "type": "array",
-            "title": "Process Steps"
+            "title": "Process Steps (4 steps)"
           }
         ],
         "name": "process",
@@ -422,18 +556,21 @@
       {
         "fields": [
           {
+            "placeholder": "e.g. Testimonials",
             "initialValue": "Testimonials",
             "name": "label",
             "type": "string",
             "title": "Section Label"
           },
           {
+            "placeholder": "e.g. What Our",
             "initialValue": "What Our",
             "name": "headingMain",
             "type": "string",
             "title": "Heading (white)"
           },
           {
+            "placeholder": "e.g. Clients Say",
             "initialValue": "Clients Say",
             "name": "headingAccent",
             "type": "string",
@@ -441,6 +578,8 @@
           },
           {
             "rows": 2,
+            "placeholder": "e.g. Rated 5 stars by homeowners...",
+            "initialValue": "Rated 5 stars by homeowners and businesses across Crewe and Cheshire.",
             "name": "subtext",
             "type": "text"
           }
@@ -452,21 +591,26 @@
       {
         "fields": [
           {
+            "placeholder": "e.g. Ready to Transform Your Space?",
             "initialValue": "Ready to Transform Your Space?",
             "name": "heading",
             "type": "string"
           },
           {
             "rows": 2,
+            "placeholder": "e.g. Get in touch today for a free, no-obligation quote.",
+            "initialValue": "Get in touch today for a free, no-obligation quote. We're excited to bring your ideas to life.",
             "name": "subtext",
             "type": "text"
           },
           {
+            "placeholder": "e.g. Get a Free Quote",
             "initialValue": "Get a Free Quote",
             "name": "primaryButtonText",
             "type": "string"
           },
           {
+            "placeholder": "e.g. View Our Work",
             "initialValue": "View Our Work",
             "name": "secondaryButtonText",
             "type": "string"
@@ -474,7 +618,7 @@
         ],
         "name": "ctaBanner",
         "type": "object",
-        "title": "📣 CTA Banner"
+        "title": "📣 CTA Banner (bottom call to action)"
       }
     ],
     "name": "homepage",
@@ -2028,32 +2172,71 @@
   {
     "fields": [
       {
+        "options": {
+          "hotspot": false
+        },
+        "description": "Upload your company logo. Best format: PNG with transparent background, at least 400px wide.",
+        "fields": [
+          {
+            "initialValue": "Mikes Constructions Logo",
+            "name": "alt",
+            "type": "string",
+            "title": "Alt text"
+          }
+        ],
+        "name": "logo",
+        "type": "image",
+        "title": "🖼 Logo Image"
+      },
+      {
+        "initialValue": false,
+        "description": "Turn ON to show your logo image. Turn OFF to show the \"M + Mikes Constructions\" text.",
+        "name": "useLogo",
+        "type": "boolean",
+        "title": "Use Logo Image (instead of text)"
+      },
+      {
+        "initialValue": 140,
+        "description": "How wide your logo appears in the navbar. Default: 140. Adjust if it looks too big or small.",
+        "name": "logoWidth",
+        "type": "number",
+        "title": "Logo Width (px)"
+      },
+      {
+        "placeholder": "e.g. Mikes Constructions Group Ltd",
         "initialValue": "Mikes Constructions Group Ltd",
         "name": "companyName",
         "type": "string"
       },
       {
-        "description": "The paragraph under the main headline",
+        "placeholder": "e.g. Your Trusted Partner in Construction and Refurbishment across Crewe",
+        "initialValue": "Your Trusted Partner in Construction and Refurbishment across Crewe, Cheshire and the North West.",
         "name": "tagline",
         "type": "string",
         "title": "Hero Tagline"
       },
       {
+        "placeholder": "e.g. +44 7700 900000 — this will show in the footer",
         "name": "phone",
         "type": "string",
         "title": "Phone Number"
       },
       {
+        "placeholder": "e.g. info@mikes-constructions.co.uk",
+        "initialValue": "info@mikes-constructions.co.uk",
         "name": "email",
         "type": "string",
         "title": "Email Address"
       },
       {
+        "placeholder": "e.g. Crewe, Cheshire & surrounding areas",
+        "initialValue": "Crewe, Cheshire & surrounding areas",
         "name": "address",
         "type": "string",
-        "title": "Address / Area"
+        "title": "Service Area"
       },
       {
+        "placeholder": "e.g. https://www.facebook.com/YourPageName",
         "validation": [
           {
             "level": "error",
@@ -2080,6 +2263,7 @@
         "title": "Facebook URL"
       },
       {
+        "placeholder": "e.g. https://www.instagram.com/YourHandle",
         "validation": [
           {
             "level": "error",
@@ -2106,6 +2290,7 @@
         "title": "Instagram URL"
       },
       {
+        "placeholder": "e.g. https://www.linkedin.com/company/YourCompany",
         "validation": [
           {
             "level": "error",
@@ -2132,6 +2317,7 @@
         "title": "LinkedIn URL"
       },
       {
+        "placeholder": "e.g. https://www.tiktok.com/@YourHandle",
         "validation": [
           {
             "level": "error",
@@ -2158,6 +2344,7 @@
         "title": "TikTok URL"
       },
       {
+        "placeholder": "e.g. https://www.youtube.com/@YourChannel",
         "validation": [
           {
             "level": "error",
@@ -2184,6 +2371,7 @@
         "title": "YouTube URL"
       },
       {
+        "placeholder": "e.g. https://www.x.com/YourHandle",
         "validation": [
           {
             "level": "error",
@@ -2210,16 +2398,18 @@
         "title": "X (Twitter) URL"
       },
       {
+        "placeholder": "e.g. 200",
         "initialValue": 200,
         "name": "projectsCompleted",
         "type": "number",
-        "title": "Projects Completed (stat)"
+        "title": "Projects Completed (stat number)"
       },
       {
+        "placeholder": "e.g. 15",
         "initialValue": 15,
         "name": "yearsExperience",
         "type": "number",
-        "title": "Years of Experience (stat)"
+        "title": "Years of Experience (stat number)"
       }
     ],
     "name": "siteSettings",

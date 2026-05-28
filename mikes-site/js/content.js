@@ -56,6 +56,19 @@ function addFont(name) {
 async function loadSiteSettings() {
   const s = await getSiteSettings()
   if (!s) return
+
+  // ── Logo ──
+  if (s.useLogo && s.logo?.asset?._id) {
+    const logoUrl = imageUrl(s.logo.asset._id, (s.logoWidth || 140) * 2)
+    const width   = s.logoWidth || 140
+    const alt     = s.logo.alt || s.companyName || 'Logo'
+    // Replace all nav logos (navbar + footer) with the image
+    document.querySelectorAll('.nav-logo').forEach(el => {
+      el.innerHTML = `<img src="${logoUrl}" alt="${alt}" style="height:44px;width:auto;max-width:${width}px;object-fit:contain;display:block" />`
+    })
+  }
+
+  // ── Socials ──
   const links = { Facebook: s.facebook, Instagram: s.instagram, LinkedIn: s.linkedin, TikTok: s.tiktok, YouTube: s.youtube, 'X (Twitter)': s.x, X: s.x }
   Object.entries(links).forEach(([label, href]) => {
     if (href) document.querySelectorAll(`[aria-label="${label}"]`).forEach(el => el.href = href)
@@ -79,7 +92,6 @@ async function loadHomepage() {
   // Hero
   const h = hp.hero
   if (h) {
-    if (h.eyebrow) setText('.hero-eyebrow', h.eyebrow)
     if (h.headingLine1 || h.headingLine2 || h.headingLine3) {
       const el = document.querySelector('.hero h1')
       if (el) el.innerHTML = `${h.headingLine1||''}<br><em>${h.headingLine2||''}</em><br>${h.headingLine3||''}`

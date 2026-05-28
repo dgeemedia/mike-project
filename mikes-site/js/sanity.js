@@ -41,7 +41,7 @@ export const getFeaturedProjects = () => sanityFetch(`*[_type=="project"&&featur
 export const getProjects         = () => sanityFetch(`*[_type=="project"]|order(order asc,completedDate desc){_id,title,slug,status,category,location,description,featured,mainImage{asset->{_id},alt}}`)
 export const getPosts            = (n=12) => sanityFetch(`*[_type=="post"&&status=="published"]|order(publishedAt desc)[0...${n}]{_id,title,slug,category,excerpt,publishedAt,author,coverImage{asset->{_id},alt}}`)
 export const getTestimonials     = (featured=false) => sanityFetch(`*[_type=="testimonial"${featured?'&&featured==true':''}]|order(order asc){_id,name,location,rating,review}`)
-export const getSiteSettings     = () => sanityFetch(`*[_type=="siteSettings"&&_id=="siteSettings"][0]{companyName,tagline,phone,email,address,facebook,instagram,linkedin,tiktok,youtube,x,projectsCompleted,yearsExperience}`)
+export const getSiteSettings     = () => sanityFetch(`*[_type=="siteSettings"&&_id=="siteSettings"][0]{logo{asset->{_id},alt},logoWidth,useLogo,companyName,tagline,phone,email,address,facebook,instagram,linkedin,tiktok,youtube,x,projectsCompleted,yearsExperience}`)
 export const getDesignSettings   = () => sanityFetch(`*[_type=="designSettings"&&_id=="designSettings"][0]{accentColor,accentDark,primaryColor,textColor,lightBg,headingFont,bodyFont}`)
 
 export default sanityFetch
