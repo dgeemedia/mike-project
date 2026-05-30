@@ -103,22 +103,20 @@ a { text-decoration: none; color: inherit; }
 }
 
 .nav-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  text-decoration: none;
 }
-.nav-logo span { color: var(--accent); }
+.nav-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  display: block;
+}
+/* Keep logo-mark for any fallback but hidden when logo image is present */
 .logo-mark {
-  width: 38px; height: 38px;
-  background: var(--accent);
-  border-radius: 2px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 700; color: var(--primary);
+  display: none;
 }
 
 .nav-links {

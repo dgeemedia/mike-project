@@ -5,8 +5,7 @@ const NAV_HTML = `
   <div class="container">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
-        <div class="logo-mark">M</div>
-        <div>Mikes <span>Constructions</span></div>
+        <img src="images/logo_light.png" alt="Mikes Constructions Group Ltd" class="nav-logo-img" />
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Home</a></li>
@@ -38,8 +37,7 @@ const FOOTER_HTML = `
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="index.html" class="nav-logo" style="margin-bottom:0">
-          <div class="logo-mark">M</div>
-          <div style="color:#fff">Mikes <span style="color:var(--accent)">Constructions</span></div>
+          <img src="images/logo_light.png" alt="Mikes Constructions Group Ltd" class="nav-logo-img" />
         </a>
         <p>Defining the future of quality construction through heritage-rich craftsmanship and architectural excellence. Serving Crewe and surrounding areas.</p>
         <div class="footer-social">

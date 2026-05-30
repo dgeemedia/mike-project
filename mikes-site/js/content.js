@@ -58,13 +58,15 @@ async function loadSiteSettings() {
   if (!s) return
 
   // ── Logo ──
+  // Use local logo files — light version for dark navbar/footer
+  // Only override with Sanity logo if explicitly set
   if (s.useLogo && s.logo?.asset?._id) {
     const logoUrl = imageUrl(s.logo.asset._id, (s.logoWidth || 140) * 2)
-    const width   = s.logoWidth || 140
-    const alt     = s.logo.alt || s.companyName || 'Logo'
-    // Replace all nav logos (navbar + footer) with the image
-    document.querySelectorAll('.nav-logo').forEach(el => {
-      el.innerHTML = `<img src="${logoUrl}" alt="${alt}" style="height:44px;width:auto;max-width:${width}px;object-fit:contain;display:block" />`
+    const alt     = s.logo.alt || s.companyName || 'Mikes Constructions'
+    document.querySelectorAll('.nav-logo-img').forEach(el => {
+      el.src = logoUrl
+      el.alt = alt
+      el.style.maxWidth = `${s.logoWidth || 140}px`
     })
   }
 
