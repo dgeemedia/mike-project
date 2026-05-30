@@ -28,7 +28,7 @@
   <!-- Google Search Console verification (replace with your real code) -->
   <meta name="google-site-verification" content="LuC1NynCZzEJBns05pTqRHF4c1vx6lgeNCe_drB00vU" />
 
-  <!-- Google Analytics (replace G-XXXXXXXXXX with your real Measurement ID) -->
+  <!-- Google Analytics (replace G-DF2HVFHDDR with your real Measurement ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF2HVFHDDR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -103,7 +103,7 @@
             <div class="contact-icon">✉️</div>
             <div>
               <strong>Email Us</strong>
-              <span>info@mikes-constructions.co.uk</span>
+              <span>enquiry@mikes-constructions.co.uk</span>
             </div>
           </div>
 
@@ -130,28 +130,36 @@
         <div data-reveal data-reveal-delay="2">
           <div class="contact-form">
             <h3 style="font-size:22px;margin-bottom:28px">Request a Free Quote</h3>
-            <form id="contact-form">
+            <form id="contact-form" action="https://formspree.io/f/xreddvgr" method="POST">
+
+              <!-- Formspree: redirect back to thank you after submit -->
+              <input type="hidden" name="_next" value="https://mikes-constructions.co.uk/contact.html?sent=true" />
+              <!-- Formspree: subject line of the email Mike receives -->
+              <input type="hidden" name="_subject" value="New Enquiry from Website — Mikes Constructions" />
+              <!-- Formspree: stops spam bots -->
+              <input type="text" name="_gotcha" style="display:none" />
+
               <div class="form-row">
                 <div class="form-group">
                   <label>First Name *</label>
-                  <input type="text" placeholder="John" required />
+                  <input type="text" name="first_name" placeholder="John" required />
                 </div>
                 <div class="form-group">
                   <label>Last Name *</label>
-                  <input type="text" placeholder="Smith" required />
+                  <input type="text" name="last_name" placeholder="Smith" required />
                 </div>
               </div>
               <div class="form-group">
                 <label>Email Address *</label>
-                <input type="email" placeholder="john@example.com" required />
+                <input type="email" name="email" placeholder="john@example.com" required />
               </div>
               <div class="form-group">
                 <label>Phone Number</label>
-                <input type="tel" placeholder="+44 7700 900000" />
+                <input type="tel" name="phone" placeholder="+44 7700 900000" />
               </div>
               <div class="form-group">
                 <label>Type of Project *</label>
-                <select required>
+                <select name="project_type" required>
                   <option value="">Select a service…</option>
                   <option>Full Property Renovation</option>
                   <option>Bathroom Renovation</option>
@@ -165,7 +173,7 @@
               </div>
               <div class="form-group">
                 <label>Tell Us About Your Project *</label>
-                <textarea placeholder="Give us a brief description of what you'd like to achieve — even rough ideas are welcome…" required></textarea>
+                <textarea name="message" placeholder="Give us a brief description of what you'd like to achieve — even rough ideas are welcome…" required></textarea>
               </div>
               <button type="submit" class="btn btn-primary form-submit">Send Message</button>
               <div id="form-success" class="form-success">

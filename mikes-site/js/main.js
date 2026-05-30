@@ -76,21 +76,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Contact form ──
+  // ── Contact form — Formspree integration ──
   const form = document.getElementById('contact-form');
   if (form) {
-    form.addEventListener('submit', e => {
+    // Show success message if redirected back after Formspree submission
+    if (window.location.search.includes('sent=true')) {
+      const msg = document.getElementById('form-success');
+      if (msg) {
+        msg.style.display = 'block';
+        msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Handle form submit with fetch (no page reload)
+    form.addEventListener('submit', async e => {
       e.preventDefault();
       const btn = form.querySelector('.form-submit');
+      const msg = document.getElementById('form-success');
       btn.textContent = 'Sending…';
       btn.disabled = true;
-      setTimeout(() => {
-        form.reset();
+
+      try {
+        const data = new FormData(form);
+        const res  = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          form.reset();
+          btn.textContent = 'Send Message';
+          btn.disabled = false;
+          if (msg) {
+            msg.style.display = 'block';
+            msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => msg.style.display = 'none', 6000);
+          }
+        } else {
+          btn.textContent = 'Send Message';
+          btn.disabled = false;
+          alert('Sorry, something went wrong. Please email us directly at enquiry@mikes-constructions.co.uk');
+        }
+      } catch (err) {
         btn.textContent = 'Send Message';
         btn.disabled = false;
-        const msg = document.getElementById('form-success');
-        if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 5000); }
-      }, 1400);
+        alert('Sorry, something went wrong. Please email us directly at enquiry@mikes-constructions.co.uk');
+      }
     });
   }
 
