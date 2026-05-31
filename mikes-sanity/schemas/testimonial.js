@@ -1,3 +1,4 @@
+// mikes-sanity/schemas/testimonial.js — Sanity schema for the testimonial content of Mikes Constructions Group Ltd website
 import { defineField, defineType } from 'sanity'
 
 export default defineType({

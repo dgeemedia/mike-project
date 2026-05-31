@@ -1,3 +1,4 @@
+// mikes-sanity/sanity.config.js — Sanity Studio configuration for Mikes Constructions Group Ltd
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'

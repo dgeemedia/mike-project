@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-05-30T21:53:00.052Z",
+  "createdAt": "2026-05-31T01:51:26.244Z",
   "studioVersion": "5.27.0",
   "version": 3,
   "workspaces": [
@@ -13,7 +13,7 @@
       },
       "name": "mikes-constructions",
       "projectId": "2ap09xp4",
-      "schema": "277672d8.create-schema.json",
+      "schema": "3ca8c1a5.create-schema.json",
       "title": "Mikes Constructions — CMS",
       "tools": "ef87c8fe.create-tools.json"
     }

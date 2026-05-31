@@ -1,3 +1,4 @@
+// mikes-sanity/schemas/contactPage.js — Sanity schema for the "Contact" page content of Mikes Constructions Group Ltd website
 import { defineField, defineType } from 'sanity'
 
 export default defineType({

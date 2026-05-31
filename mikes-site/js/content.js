@@ -4,7 +4,8 @@
 import {
   getHomepage, getAboutPage, getServicesPage, getProjectsPage,
   getContactPage, getFaqPage, getFeaturedProjects, getProjects,
-  getPosts, getTestimonials, getSiteSettings, getDesignSettings, imageUrl
+  getPosts, getTestimonials, getSiteSettings, getDesignSettings,
+  getServices, imageUrl
 } from './sanity.js'
 
 const page = location.pathname.split('/').filter(Boolean).pop()?.replace('.html','') || 'index'
@@ -57,9 +58,6 @@ async function loadSiteSettings() {
   const s = await getSiteSettings()
   if (!s) return
 
-  // ── Logo ──
-  // Use local logo files — light version for dark navbar/footer
-  // Only override with Sanity logo if explicitly set
   if (s.useLogo && s.logo?.asset?._id) {
     const logoUrl = imageUrl(s.logo.asset._id, (s.logoWidth || 140) * 2)
     const alt     = s.logo.alt || s.companyName || 'Mikes Constructions'
@@ -70,7 +68,6 @@ async function loadSiteSettings() {
     })
   }
 
-  // ── Socials ──
   const links = { Facebook: s.facebook, Instagram: s.instagram, LinkedIn: s.linkedin, TikTok: s.tiktok, YouTube: s.youtube, 'X (Twitter)': s.x, X: s.x }
   Object.entries(links).forEach(([label, href]) => {
     if (href) document.querySelectorAll(`[aria-label="${label}"]`).forEach(el => el.href = href)
@@ -124,9 +121,15 @@ async function loadHomepage() {
       const s = hp.stats[i]; if (!s) return
       const num = card.querySelector('.stat-number')
       const lbl = card.querySelector('.stat-label')
-      if (num) { num.dataset.count = s.number; num.dataset.prefix = s.prefix||''; num.dataset.suffix = s.suffix||''; num.textContent = (s.prefix||'')+'0'+(s.suffix||'') }
+      if (num) {
+        num.dataset.count  = s.number
+        num.dataset.prefix = s.prefix || ''
+        num.dataset.suffix = s.suffix || ''
+        num.textContent    = (s.prefix||'') + '0' + (s.suffix||'')
+      }
       if (lbl && s.label) lbl.textContent = s.label
     })
+    if (typeof window.runStatsCounters === 'function') window.runStatsCounters()
   }
 
   // About snippet
@@ -245,13 +248,11 @@ async function loadAbout() {
   const d = await getAboutPage()
   if (!d) return
 
-  // Page hero
   if (d.pageHero) {
     const h1 = document.querySelector('.page-hero h1')
     if (h1) h1.innerHTML = `${d.pageHero.headingMain||'About'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Mikes Constructions'}</em>`
   }
 
-  // Story
   const s = d.story
   if (s) {
     const label = document.querySelector('.section-label')
@@ -267,7 +268,6 @@ async function loadAbout() {
     if (s.accentImage?.asset?._id){ const img = document.querySelector('.about-img-accent'); if (img) { img.src = imageUrl(s.accentImage.asset._id,800); img.alt = s.accentImage.alt||'' } }
   }
 
-  // Commitment
   const c = d.commitment
   if (c) {
     const sec = document.querySelector('.section-light .container > div')
@@ -282,7 +282,6 @@ async function loadAbout() {
     }
   }
 
-  // Why Choose
   const wc = d.whyChoose
   if (wc) {
     const sec = document.querySelector('.why-grid')?.closest('.section')
@@ -299,7 +298,6 @@ async function loadAbout() {
     }
   }
 
-  // Featured testimonial
   const ft = d.featuredTestimonial
   if (ft) {
     const quoteEl = document.querySelector('.section .container > div > div p[style*="17px"]')
@@ -310,47 +308,54 @@ async function loadAbout() {
     if (locEl   && ft.location) locEl.textContent = ft.location
   }
 
-  // CTA
   applyCta(d.ctaBanner)
 }
 
 // ═══════════════════════════════════════════
 //  SERVICES PAGE
 // ═══════════════════════════════════════════
+// FIX: Now fetches services from the 'service' document collection via
+// getServices() rather than the deprecated inline array inside the
+// servicesPage singleton. The page-level fields (hero, intro, CTA) still
+// come from getServicesPage(). If Sanity has no service documents yet,
+// the static HTML service sections remain visible as a fallback.
 async function loadServices() {
-  const d = await getServicesPage()
-  if (!d) return
+  const [d, services] = await Promise.all([ getServicesPage(), getServices() ])
 
-  if (d.pageHero) {
+  if (d?.pageHero) {
     const h1 = document.querySelector('.page-hero h1')
     if (h1) h1.innerHTML = `${d.pageHero.headingMain||'Our'} <em style="color:var(--accent)">${d.pageHero.headingAccent||'Services'}</em>`
   }
 
-  if (d.introText) {
+  if (d?.introText) {
     const p = document.querySelector('.section-sm p[data-reveal]')
     if (p) p.textContent = d.introText
   }
 
-  if (d.services?.length) {
+  // Only replace service sections if Sanity has service documents.
+  // If the collection is empty we leave the static HTML intact so the page
+  // never appears broken while Mike is populating the CMS.
+  if (services?.length) {
     const sections = document.querySelectorAll('.about-grid')
-    d.services.forEach((s, i) => {
-      const grid = sections[i]; if (!grid) return
+    services.forEach((s, i) => {
+      const grid = sections[i]
+      if (!grid) return
       const iconEl = grid.querySelector('.service-icon')
       const lbl    = grid.querySelector('.section-label')
       const title  = grid.querySelector('.section-title')
       const ps     = grid.querySelectorAll('p[style]')
       const imgs   = grid.querySelectorAll('img')
-      if (iconEl && s.icon) iconEl.textContent = s.icon
-      if (lbl    && s.label) lbl.textContent  = s.label
-      if (title)  title.innerHTML = `${s.headingMain||''} <em>${s.headingAccent||''}</em>`
-      if (ps[0] && s.paragraph1) ps[0].textContent = s.paragraph1
-      if (ps[1] && s.paragraph2) ps[1].textContent = s.paragraph2
-      if (s.mainImage?.asset?._id  && imgs[0]) { imgs[0].src = imageUrl(s.mainImage.asset._id,1200);  imgs[0].alt = s.mainImage.alt||'' }
+      if (iconEl && s.icon)         iconEl.textContent  = s.icon
+      if (lbl)                      lbl.textContent     = `Service ${String(s.order || i + 1).padStart(2, '0')}`
+      if (title)                    title.innerHTML     = `${s.headingMain||''} <em>${s.headingAccent||''}</em>`
+      if (ps[0] && s.paragraph1)    ps[0].textContent   = s.paragraph1
+      if (ps[1] && s.paragraph2)    ps[1].textContent   = s.paragraph2
+      if (s.mainImage?.asset?._id   && imgs[0]) { imgs[0].src = imageUrl(s.mainImage.asset._id,1200);  imgs[0].alt = s.mainImage.alt||'' }
       if (s.accentImage?.asset?._id && imgs[1]) { imgs[1].src = imageUrl(s.accentImage.asset._id,800); imgs[1].alt = s.accentImage.alt||'' }
     })
   }
 
-  applyCta(d.ctaBanner)
+  if (d?.ctaBanner) applyCta(d.ctaBanner)
 }
 
 // ═══════════════════════════════════════════
@@ -366,17 +371,26 @@ async function loadProjects() {
 
   if (projects?.length) {
     const grid = document.querySelector('.gallery-grid')
-    if (grid) grid.innerHTML = projects.map((p, i) => `
-      <div class="gallery-item" data-reveal data-reveal-delay="${(i%3)+1}">
-        <img src="${imageUrl(p.mainImage?.asset?._id,800)}" alt="${p.mainImage?.alt||p.title}" loading="lazy"/>
-        <div class="gallery-caption">
-          <div>
-            <div class="project-tag" style="margin:0 auto 8px;display:inline-block">${catLabel(p.category)}</div>
-            <p>${p.title}${p.location?' — '+p.location:''}</p>
-            ${p.status==='ongoing'?'<p style="color:var(--accent);font-size:11px;margin-top:4px">🔨 Ongoing</p>':''}
+    if (grid) {
+      grid.innerHTML = projects.map((p, i) => `
+        <div class="gallery-item" data-category="${p.category||'renovation'}" data-reveal data-reveal-delay="${(i%3)+1}">
+          <img src="${imageUrl(p.mainImage?.asset?._id,800)}" alt="${p.mainImage?.alt||p.title}" loading="lazy"/>
+          <div class="gallery-caption">
+            <div>
+              <div class="project-tag" style="margin:0 auto 8px;display:inline-block">${catLabel(p.category)}</div>
+              <p>${p.title}${p.location?' — '+p.location:''}</p>
+              ${p.status==='ongoing'?'<p style="color:var(--accent);font-size:11px;margin-top:4px">🔨 Ongoing</p>':''}
+            </div>
           </div>
-        </div>
-      </div>`).join('')
+        </div>`).join('')
+
+      const revealObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      grid.querySelectorAll('[data-reveal]').forEach(el => revealObs.observe(el));
+    }
   }
 
   if (d?.ctaBanner) {
@@ -461,14 +475,18 @@ async function loadFaq() {
 
   if (d.faqs?.length) {
     const list = document.querySelector('.faq-list')
-    if (list) list.innerHTML = d.faqs.map((faq, i) => `
-      <div class="faq-item ${i===0?'open':''}">
-        <div class="faq-question">
-          <h3>${faq.question}</h3>
-          <div class="faq-toggle">+</div>
-        </div>
-        <div class="faq-answer"><p>${faq.answer}</p></div>
-      </div>`).join('')
+    if (list) {
+      list.innerHTML = d.faqs.map((faq, i) => `
+        <div class="faq-item ${i===0?'open':''}">
+          <div class="faq-question">
+            <h3>${faq.question}</h3>
+            <div class="faq-toggle">${i===0?'−':'+'}</div>
+          </div>
+          <div class="faq-answer"><p>${faq.answer}</p></div>
+        </div>`).join('')
+      // No need to re-bind click handlers — main.js uses document-level
+      // event delegation which covers dynamically injected items.
+    }
   }
 
   if (d.ctaBanner) {
@@ -509,12 +527,12 @@ async function loadBlog() {
 function setText(sel, text) { const el = document.querySelector(sel); if (el && text) el.textContent = text }
 
 function setSectionHead(sec, label, main, accent, sub) {
-  const lbl = sec.querySelector('.section-label')
-  const ttl = sec.querySelector('.section-title')
+  const lbl    = sec.querySelector('.section-label')
+  const ttl    = sec.querySelector('.section-title')
   const sub_el = sec.querySelector('.section-sub')
-  if (lbl && label)  lbl.textContent = label
-  if (ttl && (main || accent)) ttl.innerHTML = `${main||''} <em>${accent||''}</em>`
-  if (sub_el && sub) sub_el.textContent = sub
+  if (lbl && label)          lbl.textContent = label
+  if (ttl && (main||accent)) ttl.innerHTML   = `${main||''} <em>${accent||''}</em>`
+  if (sub_el && sub)         sub_el.textContent = sub
 }
 
 function applyCta(cta) {

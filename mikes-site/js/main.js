@@ -1,5 +1,5 @@
 // =============================================
-//   MIKES CONSTRUCTIONS — Main JS
+//   mikes-site/js/main.js — main JS file for Mikes Constructions Group Ltd website
 // =============================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isActive) badge.classList.add('active');
     });
   });
-  // Close tooltip when tapping outside
   document.addEventListener('click', e => {
     if (!e.target.closest('.badge-item')) {
       badgeItems.forEach(b => b.classList.remove('active'));
@@ -67,19 +66,49 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── FAQ accordion ──
-  document.querySelectorAll('.faq-question').forEach(q => {
-    q.addEventListener('click', () => {
-      const item = q.closest('.faq-item');
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
+  // Uses event delegation so it works for both static HTML items AND items
+  // dynamically injected by content.js after DOMContentLoaded.
+  //
+  // FIX (v2): The toggle element (div.faq-toggle) now syncs its text content
+  // to '+' (closed) or '−' (open) whenever an item is opened or closed.
+  // Previously the symbol never changed, leaving all toggles showing '+' even
+  // when an item was visibly expanded.
+  //
+  // FIX (v2): On initial load, any .faq-item that already has class 'open'
+  // (the first static item on faq.html) now has its toggle set to '−' so the
+  // symbol matches the expanded state from the start.
+
+  // Sync toggle symbol for items that start open in the HTML
+  document.querySelectorAll('.faq-item.open .faq-toggle').forEach(toggle => {
+    toggle.textContent = '−';
+  });
+
+  document.addEventListener('click', e => {
+    const question = e.target.closest('.faq-question');
+    if (!question) return;
+    const item = question.closest('.faq-item');
+    if (!item) return;
+
+    const isOpen = item.classList.contains('open');
+
+    // Close all items and reset their toggles to '+'
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      const t = i.querySelector('.faq-toggle');
+      if (t) t.textContent = '+';
     });
+
+    // Open the clicked item (if it was closed) and set its toggle to '−'
+    if (!isOpen) {
+      item.classList.add('open');
+      const toggle = item.querySelector('.faq-toggle');
+      if (toggle) toggle.textContent = '−';
+    }
   });
 
   // ── Contact form — Formspree integration ──
   const form = document.getElementById('contact-form');
   if (form) {
-    // Show success message if redirected back after Formspree submission
     if (window.location.search.includes('sent=true')) {
       const msg = document.getElementById('form-success');
       if (msg) {
@@ -88,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Handle form submit with fetch (no page reload)
     form.addEventListener('submit', async e => {
       e.preventDefault();
       const btn = form.querySelector('.form-submit');
@@ -135,8 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Stats counter animation ──
-  const statNums = document.querySelectorAll('.stat-number[data-count]');
-  if (statNums.length) {
+  // Exported as window.runStatsCounters() so content.js can re-run it after
+  // Sanity data has updated the data-count values on stat elements.
+  window.runStatsCounters = function () {
+    const statNums = document.querySelectorAll('.stat-number[data-count]');
+    if (!statNums.length) return;
+
     const countObs = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
@@ -154,7 +186,61 @@ document.addEventListener('DOMContentLoaded', () => {
         countObs.unobserve(el);
       });
     }, { threshold: 0.5 });
-    statNums.forEach(n => countObs.observe(n));
+
+    statNums.forEach(n => {
+      // Reset text so counter animates fresh after Sanity data update
+      const prefix = n.dataset.prefix || '';
+      const suffix = n.dataset.suffix || '';
+      n.textContent = prefix + '0' + suffix;
+      countObs.observe(n);
+    });
+  };
+
+  // Run immediately for any static stat numbers already in the DOM
+  window.runStatsCounters();
+
+  // ── Project filter tabs ──
+  const filterTabs = document.querySelectorAll('.filter-btn');
+  if (filterTabs.length) {
+    filterTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active button styling
+        filterTabs.forEach(b => {
+          b.classList.remove('active', 'btn-dark');
+          b.style.background = 'var(--light)';
+          b.style.color = 'var(--text)';
+          b.style.border = '1px solid var(--border)';
+        });
+        btn.classList.add('active', 'btn-dark');
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.border = '';
+
+        const filter = btn.dataset.filter;
+        const items  = document.querySelectorAll('.gallery-item');
+
+        items.forEach(item => {
+          const cat = item.dataset.category || '';
+          const show = filter === 'all' || cat === filter;
+
+          if (show) {
+            item.style.display = '';
+            // Re-trigger reveal animation for items coming back into view
+            item.classList.remove('revealed');
+            setTimeout(() => {
+              const revealObs = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                  if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); }
+                });
+              }, { threshold: 0.1 });
+              revealObs.observe(item);
+            }, 10);
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
   }
 
 });

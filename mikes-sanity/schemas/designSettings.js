@@ -1,3 +1,4 @@
+// mikes-sanity/schemas/designSettings.js — Sanity schema for the design and colour settings of Mikes Constructions Group Ltd website
 import { defineField, defineType } from 'sanity'
 
 export default defineType({

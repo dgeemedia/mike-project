@@ -24,11 +24,38 @@ export function imageUrl(ref, width = 800) {
 }
 
 // ── Pages ──
-export const getHomepage     = () => sanityFetch(`*[_type=="homepage"&&_id=="homepage"][0]{hero{eyebrow,headingLine1,headingLine2,headingLine3,subtext,primaryButtonText,secondaryButtonText,backgroundImage{asset->{_id},alt}},heroBadges[]{icon,title,subtitle},stats[]{number,prefix,suffix,label},aboutSnippet{label,headingMain,headingAccent,paragraph1,paragraph2,highlights,buttonText,yearsExperience,mainImage{asset->{_id},alt},accentImage{asset->{_id},alt}},servicesSection{label,headingMain,headingAccent,subtext,buttonText},whyChoose{label,headingMain,headingAccent,subtext,cards[]{title,body}},projectsSection{label,headingMain,headingAccent},process{label,headingMain,headingAccent,subtext,steps[]{title,description}},testimonialsSection{label,headingMain,headingAccent,subtext},ctaBanner{heading,subtext,primaryButtonText,secondaryButtonText}}`)
+// FIX: removed stale 'eyebrow' field from hero projection — deleted from schema
+// but was still being queried, returning null on every homepage fetch.
+// FIX: getServicesPage no longer requests the deprecated inline 'services' array.
+export const getHomepage = () => sanityFetch(
+  `*[_type=="homepage"&&_id=="homepage"][0]{
+    hero{
+      headingLine1,headingLine2,headingLine3,subtext,
+      primaryButtonText,secondaryButtonText,
+      backgroundImage{asset->{_id},alt}
+    },
+    heroBadges[]{icon,title,subtitle},
+    stats[]{number,prefix,suffix,label},
+    aboutSnippet{
+      label,headingMain,headingAccent,paragraph1,paragraph2,
+      highlights,buttonText,yearsExperience,
+      mainImage{asset->{_id},alt},accentImage{asset->{_id},alt}
+    },
+    servicesSection{label,headingMain,headingAccent,subtext,buttonText},
+    whyChoose{label,headingMain,headingAccent,subtext,cards[]{title,body}},
+    projectsSection{label,headingMain,headingAccent},
+    process{label,headingMain,headingAccent,subtext,steps[]{title,description}},
+    testimonialsSection{label,headingMain,headingAccent,subtext},
+    ctaBanner{heading,subtext,primaryButtonText,secondaryButtonText}
+  }`
+)
 
 export const getAboutPage    = () => sanityFetch(`*[_type=="aboutPage"&&_id=="aboutPage"][0]{pageHero,story{label,headingMain,headingAccent,paragraph1,paragraph2,paragraph3,yearsExperience,mainImage{asset->{_id},alt},accentImage{asset->{_id},alt}},commitment{label,headingMain,headingAccent,paragraph1,paragraph2},whyChoose{label,headingMain,headingAccent,reasons[]{title,body}},featuredTestimonial{quote,name,location},ctaBanner{heading,subtext,primaryButtonText,secondaryButtonText}}`)
 
-export const getServicesPage = () => sanityFetch(`*[_type=="servicesPage"&&_id=="servicesPage"][0]{pageHero,introText,services[]{icon,label,headingMain,headingAccent,paragraph1,paragraph2,mainImage{asset->{_id},alt},accentImage{asset->{_id},alt}},ctaBanner{heading,subtext,primaryButtonText,secondaryButtonText}}`)
+// FIX: no longer requests the deprecated inline 'services' array from servicesPage.
+// Page-level content (hero, intro, CTA) is still fetched from the singleton.
+// Individual services now come from getServices() below.
+export const getServicesPage = () => sanityFetch(`*[_type=="servicesPage"&&_id=="servicesPage"][0]{pageHero,introText,ctaBanner{heading,subtext,primaryButtonText,secondaryButtonText}}`)
 
 export const getProjectsPage = () => sanityFetch(`*[_type=="projectsPage"&&_id=="projectsPage"][0]{pageHero,ctaBanner{heading,subtext,buttonText}}`)
 
@@ -43,5 +70,33 @@ export const getPosts            = (n=12) => sanityFetch(`*[_type=="post"&&statu
 export const getTestimonials     = (featured=false) => sanityFetch(`*[_type=="testimonial"${featured?'&&featured==true':''}]|order(order asc){_id,name,location,rating,review}`)
 export const getSiteSettings     = () => sanityFetch(`*[_type=="siteSettings"&&_id=="siteSettings"][0]{logo{asset->{_id},alt},logoWidth,useLogo,companyName,tagline,phone,email,address,facebook,instagram,linkedin,tiktok,youtube,x,projectsCompleted,yearsExperience}`)
 export const getDesignSettings   = () => sanityFetch(`*[_type=="designSettings"&&_id=="designSettings"][0]{accentColor,accentDark,primaryColor,textColor,lightBg,headingFont,bodyFont}`)
+
+// FIX: getServices() fetches from the 'service' document collection.
+// Previously the service collection existed in Sanity Studio but was never
+// queried — content.js read the deprecated inline array inside servicesPage
+// instead. Now the service collection is the single source of truth.
+// Fields match the updated service.js schema.
+export const getServices = () => sanityFetch(
+  `*[_type=="service"]|order(order asc){
+    _id,title,slug,icon,headingMain,headingAccent,
+    paragraph1,paragraph2,
+    mainImage{asset->{_id},alt},
+    accentImage{asset->{_id},alt},
+    order
+  }`
+)
+
+// ── Single post by slug (used by post.html / post-content.js) ──
+export const getPost = (slug) => sanityFetch(
+  `*[_type=="post"&&slug.current=="${slug}"&&status=="published"][0]{
+    _id,title,slug,category,excerpt,publishedAt,author,
+    coverImage{asset->{_id},alt},
+    body[]{
+      ...,
+      _type=="image"=>{...,asset->{_id},alt}
+    },
+    seoTitle,seoDescription
+  }`
+)
 
 export default sanityFetch

@@ -10,7 +10,7 @@
   <meta name="keywords" content="contact Mikes Constructions, free construction quote Crewe, builder quote Cheshire, renovation quote Crewe, building estimate Cheshire" />
   <link rel="canonical" href="https://mikes-constructions.co.uk/contact.html" />
 
-  <!-- Open Graph (Facebook, LinkedIn, WhatsApp previews) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mikes-constructions.co.uk/contact.html" />
   <meta property="og:title" content="Get a Free Quote | Mikes Constructions – Crewe, Cheshire" />
@@ -25,10 +25,8 @@
   <meta name="twitter:description" content="Contact Mikes Constructions Group Ltd for a free, no-obligation quote. Based in Crewe, serving Cheshire and the North West." />
   <meta name="twitter:image" content="https://mikes-constructions.co.uk/images/og-image.jpg" />
 
-  <!-- Google Search Console verification (replace with your real code) -->
   <meta name="google-site-verification" content="LuC1NynCZzEJBns05pTqRHF4c1vx6lgeNCe_drB00vU" />
 
-  <!-- Google Analytics (replace G-DF2HVFHDDR with your real Measurement ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF2HVFHDDR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,7 +35,6 @@
     gtag('config', 'G-DF2HVFHDDR');
   </script>
 
-  <!-- Local Business Schema (helps Google show your business in search) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -130,13 +127,21 @@
         <div data-reveal data-reveal-delay="2">
           <div class="contact-form">
             <h3 style="font-size:22px;margin-bottom:28px">Request a Free Quote</h3>
+            <!--
+              FIX: Removed the dead '_next' hidden input. main.js intercepts this
+              form with e.preventDefault() and submits via fetch() in Formspree's
+              JSON mode (Accept: application/json), so the native form POST and any
+              _next redirect never fire. The success state is shown inline by JS.
+              Keeping '_next' was misleading and unnecessary.
+
+              The '_subject' and '_gotcha' hidden inputs are kept — Formspree
+              reads them server-side regardless of submission method.
+            -->
             <form id="contact-form" action="https://formspree.io/f/xaqkkzgl" method="POST">
 
-              <!-- Formspree: redirect back to thank you after submit -->
-              <input type="hidden" name="_next" value="https://mikes-constructions.co.uk/contact.html?sent=true" />
               <!-- Formspree: subject line of the email Mike receives -->
               <input type="hidden" name="_subject" value="New Enquiry from Website — Mikes Constructions" />
-              <!-- Formspree: stops spam bots -->
+              <!-- Formspree: honeypot field to catch spam bots -->
               <input type="text" name="_gotcha" style="display:none" />
 
               <div class="form-row">

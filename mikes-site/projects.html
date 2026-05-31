@@ -10,7 +10,7 @@
   <meta name="keywords" content="construction projects Crewe, renovation portfolio Cheshire, bathroom renovation before after, kitchen renovation Crewe, building projects Cheshire" />
   <link rel="canonical" href="https://mikes-constructions.co.uk/projects.html" />
 
-  <!-- Open Graph (Facebook, LinkedIn, WhatsApp previews) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mikes-constructions.co.uk/projects.html" />
   <meta property="og:title" content="Project Portfolio | Mikes Constructions – Crewe & Cheshire" />
@@ -25,10 +25,8 @@
   <meta name="twitter:description" content="See our latest completed and ongoing construction projects across Crewe and Cheshire — bathrooms, kitchens, full renovations and structural works." />
   <meta name="twitter:image" content="https://mikes-constructions.co.uk/images/og-image.jpg" />
 
-  <!-- Google Search Console verification (replace with your real code) -->
   <meta name="google-site-verification" content="LuC1NynCZzEJBns05pTqRHF4c1vx6lgeNCe_drB00vU" />
 
-  <!-- Google Analytics (replace G-XXXXXXXXXX with your real Measurement ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF2HVFHDDR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,7 +35,6 @@
     gtag('config', 'G-DF2HVFHDDR');
   </script>
 
-  <!-- Local Business Schema (helps Google show your business in search) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -86,19 +83,20 @@
     <div class="container">
       <div id="filter-tabs" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center" data-reveal>
         <button class="btn btn-dark filter-btn active" data-filter="all">All Projects</button>
-        <button class="btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="renovation">Full Renovation</button>
-        <button class="btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="bathroom">Bathroom</button>
-        <button class="btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="kitchen">Kitchen</button>
-        <button class="btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="structural">Structural</button>
+        <button class="btn filter-btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="renovation">Full Renovation</button>
+        <button class="btn filter-btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="bathroom">Bathroom</button>
+        <button class="btn filter-btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="kitchen">Kitchen</button>
+        <button class="btn filter-btn" style="background:var(--light);color:var(--text);border:1px solid var(--border)" data-filter="structural">Structural</button>
       </div>
     </div>
   </section>
 
   <!-- Projects grid -->
+  <!-- BUG FIX: Added data-category attributes to every gallery item so the filter JS can match them -->
   <section class="section">
     <div class="container">
-      <div class="gallery-grid">
-        <div class="gallery-item" data-reveal data-reveal-delay="1">
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-item" data-category="renovation" data-reveal data-reveal-delay="1">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/img_6341-1.jpg?resize=1200%2C1600&ssl=1" alt="Home Transformation" />
           <div class="gallery-caption">
             <div>
@@ -107,7 +105,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="2">
+        <div class="gallery-item" data-category="bathroom" data-reveal data-reveal-delay="2">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/bathroom-renovation-.jpg?resize=1200%2C1600&ssl=1" alt="Bathroom Renovation" />
           <div class="gallery-caption">
             <div>
@@ -116,7 +114,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="3">
+        <div class="gallery-item" data-category="kitchen" data-reveal data-reveal-delay="3">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/kitchen-renovation--1.jpg?resize=1200%2C1600&ssl=1" alt="Kitchen Remodel" />
           <div class="gallery-caption">
             <div>
@@ -125,7 +123,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="1">
+        <div class="gallery-item" data-category="bathroom" data-reveal data-reveal-delay="1">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/tiling-.jpg?resize=747%2C1600&ssl=1" alt="Tiling Project" />
           <div class="gallery-caption">
             <div>
@@ -134,7 +132,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="2">
+        <div class="gallery-item" data-category="structural" data-reveal data-reveal-delay="2">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/structural-wall-ellesmere--1.jpg?resize=1200%2C1604&ssl=1" alt="Structural Works" />
           <div class="gallery-caption">
             <div>
@@ -143,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="3">
+        <div class="gallery-item" data-category="renovation" data-reveal data-reveal-delay="3">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/plasterboarding.jpg?resize=899%2C1599&ssl=1" alt="Plasterboarding" />
           <div class="gallery-caption">
             <div>
@@ -152,7 +150,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="1">
+        <div class="gallery-item" data-category="structural" data-reveal data-reveal-delay="1">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/consumer-unit-2.jpg?resize=1200%2C900&ssl=1" alt="Electrical Work" />
           <div class="gallery-caption">
             <div>
@@ -161,7 +159,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="2">
+        <div class="gallery-item" data-category="bathroom" data-reveal data-reveal-delay="2">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/plumbing--1.jpg?resize=899%2C1599&ssl=1" alt="Plumbing" />
           <div class="gallery-caption">
             <div>
@@ -170,7 +168,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="3">
+        <div class="gallery-item" data-category="renovation" data-reveal data-reveal-delay="3">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/new-bedroom-wall-.jpg?resize=1200%2C1600&ssl=1" alt="Bedroom renovation" />
           <div class="gallery-caption">
             <div>
@@ -179,7 +177,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="1">
+        <div class="gallery-item" data-category="renovation" data-reveal data-reveal-delay="1">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/img_6341.jpg?resize=1200%2C1600&ssl=1" alt="Construction project" />
           <div class="gallery-caption">
             <div>
@@ -188,7 +186,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="2">
+        <div class="gallery-item" data-category="structural" data-reveal data-reveal-delay="2">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/img_6365-1.jpg?resize=1200%2C900&ssl=1" alt="Construction work" />
           <div class="gallery-caption">
             <div>
@@ -197,7 +195,7 @@
             </div>
           </div>
         </div>
-        <div class="gallery-item" data-reveal data-reveal-delay="3">
+        <div class="gallery-item" data-category="renovation" data-reveal data-reveal-delay="3">
           <img src="https://i0.wp.com/mikes-constructions.co.uk/wp-content/uploads/2025/12/img_6313-1.jpg?resize=1200%2C900&ssl=1" alt="Renovation" />
           <div class="gallery-caption">
             <div>

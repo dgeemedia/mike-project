@@ -25,10 +25,8 @@
   <meta name="twitter:description" content="Expert construction advice, renovation tips and project updates from Mikes Constructions Group Ltd in Crewe, Cheshire." />
   <meta name="twitter:image" content="https://mikes-constructions.co.uk/images/og-image.jpg" />
 
-  <!-- Google Search Console verification (replace with your real code) -->
   <meta name="google-site-verification" content="LuC1NynCZzEJBns05pTqRHF4c1vx6lgeNCe_drB00vU" />
 
-  <!-- Google Analytics (replace G-XXXXXXXXXX with your real Measurement ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF2HVFHDDR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,7 +35,6 @@
     gtag('config', 'G-DF2HVFHDDR');
   </script>
 
-  <!-- Local Business Schema (helps Google show your business in search) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -83,6 +80,13 @@
 
   <section class="section">
     <div class="container">
+      <!--
+        FIX: Static fallback blog cards previously used href="#" for all "Read More"
+        links, meaning every card was a dead link. Each card now links to
+        post.html?slug=<slug> using a slug that matches what should be published in
+        Sanity. content.js replaces this entire grid with live Sanity posts when they
+        exist, so these static cards only show when Sanity has no published posts.
+      -->
       <div class="blog-grid">
 
         <div class="blog-card" data-reveal data-reveal-delay="1">
@@ -96,7 +100,7 @@
             </div>
             <h3>5 Signs You Need a New Bathroom</h3>
             <p>From outdated fittings to persistent damp — here are the five telltale signs your bathroom is overdue a professional renovation.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=5-signs-you-need-a-new-bathroom" class="blog-read">Read More →</a>
           </div>
         </div>
 
@@ -111,7 +115,7 @@
             </div>
             <h3>How Much Does a Kitchen Remodel Cost in 2026?</h3>
             <p>A guide to realistic kitchen renovation budgets in Crewe and Cheshire — what to expect and how to plan your spend wisely.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=kitchen-remodel-cost-2026" class="blog-read">Read More →</a>
           </div>
         </div>
 
@@ -126,7 +130,7 @@
             </div>
             <h3>Loft Conversion vs Extension: Which Adds More Value?</h3>
             <p>We break down the pros, cons, costs and return on investment of loft conversions versus single-storey extensions for UK homeowners.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=loft-conversion-vs-extension" class="blog-read">Read More →</a>
           </div>
         </div>
 
@@ -141,7 +145,7 @@
             </div>
             <h3>How to Choose a Reliable Building Contractor in Cheshire</h3>
             <p>What to look for, what questions to ask, and the red flags to avoid when hiring a contractor for your next renovation project.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=how-to-choose-a-reliable-building-contractor-cheshire" class="blog-read">Read More →</a>
           </div>
         </div>
 
@@ -156,7 +160,7 @@
             </div>
             <h3>Tile Trends for 2026: What's Hot in Bathroom &amp; Kitchen Design</h3>
             <p>From large-format porcelain to textured wall tiles — our experts share the tiling trends we're seeing in Crewe homes this year.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=tile-trends-2026" class="blog-read">Read More →</a>
           </div>
         </div>
 
@@ -171,7 +175,7 @@
             </div>
             <h3>Do You Need Planning Permission for a Home Extension?</h3>
             <p>A plain-English guide to permitted development rights in England and what you need to check before you start your extension project.</p>
-            <a href="#" class="blog-read">Read More →</a>
+            <a href="post.html?slug=planning-permission-home-extension" class="blog-read">Read More →</a>
           </div>
         </div>
 

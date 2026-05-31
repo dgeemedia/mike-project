@@ -1,4 +1,4 @@
-// nav.js — injects shared navbar + footer into each page
+// mikes-site/js/nav.js — injects shared navbar + footer into each page
 
 const NAV_HTML = `
 <nav class="navbar" id="navbar">
