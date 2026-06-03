@@ -7,8 +7,8 @@
 
 :root {
   --primary: #1a2332;
-  --accent: #c8a96e;
-  --accent-dark: #a8893e;
+  --accent: #d3b36d;
+  --accent-dark: #b8964d;
   --white: #ffffff;
   --light: #f8f6f2;
   --grey: #6b7280;
@@ -108,11 +108,17 @@ a { text-decoration: none; color: inherit; }
   text-decoration: none;
 }
 .nav-logo-img {
-  height: 44px;
+  height: 56px;
   width: auto;
   max-width: 160px;
   object-fit: contain;
   display: block;
+  filter: drop-shadow(0 1px 6px rgba(211,179,109,0.18));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.nav-logo:hover .nav-logo-img {
+  filter: drop-shadow(0 2px 12px rgba(211,179,109,0.40));
+  transform: scale(1.03);
 }
 /* Keep logo-mark for any fallback but hidden when logo image is present */
 .logo-mark {
@@ -173,10 +179,9 @@ a { text-decoration: none; color: inherit; }
   position: relative;
   height: 100vh;
   min-height: 600px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 72px 0 88px; /* top clears nav, bottom clears badges bar */
-  height: auto;
-  min-height: 100vh;
+  display: flex; align-items: center;
+  overflow: hidden;
+  padding-bottom: 88px; /* clears the 88px badge bar */
 }
 .hero-bg {
   position: absolute; inset: 0;
@@ -196,7 +201,7 @@ a { text-decoration: none; color: inherit; }
   max-width: 640px;
 }
 .hero h1 {
-  font-size: clamp(36px, 4vw, 52px);
+  font-size: clamp(40px, 6vw, 68px);
   color: var(--white);
   margin-bottom: 20px;
   font-weight: 700;
@@ -651,6 +656,11 @@ a { text-decoration: none; color: inherit; }
   padding-bottom: 48px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
+.footer-brand .nav-logo-img {
+  height: 60px;
+  max-width: 180px;
+  filter: drop-shadow(0 2px 8px rgba(211,179,109,0.25));
+}
 .footer-brand p {
   color: rgba(255,255,255,0.5);
   font-size: 14px; margin: 16px 0 24px;
@@ -864,7 +874,7 @@ a { text-decoration: none; color: inherit; }
   }
   .mobile-social .social-link {
     width: 44px !important;
-    height: 44px !important;
+    height: 52px !important;
     border-radius: 50% !important;
     background: rgba(255,255,255,0.08) !important;
     display: flex !important;
@@ -906,119 +916,105 @@ a { text-decoration: none; color: inherit; }
   body.menu-open { overflow: hidden; }
 
   /* ── Hero — mobile ── */
-  .hero { height: auto; min-height: 100svh; padding: 90px 0 100px; }
+  .hero {
+    height: auto;
+    min-height: 100svh;
+    padding-top: 90px;
+    padding-bottom: 0; /* badges sit below naturally */
+    overflow: visible; /* allow badge bar to flow out */
+    display: block; /* exit flex so badges can sit below content */
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    padding: 0 24px 40px;
+  }
 
-  /* Push hero text away from the floating badges on the right */
-.hero-content { max-width: 100%; }
-  /* ── Hero badges — floating pills on right, tap to expand ── */
-.hero-badges {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: auto;
-  transform: none;
-  background: rgba(10, 17, 28, 0.88);
-  border-top: 1px solid rgba(200,169,110,0.2);
-  z-index: 5;
-}
+  /* ── Hero badges — horizontal scroll strip ── */
+  .hero-badges {
+    position: relative;
+    bottom: auto; left: auto; right: auto; top: auto;
+    transform: none;
+    background: rgba(10, 17, 28, 0.95);
+    border-top: 1px solid rgba(200,169,110,0.2);
+    z-index: 5;
+  }
+  .hero-badges-inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    height: 72px;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hero-badges-inner::-webkit-scrollbar { display: none; }
 
-.hero-badges-inner {
-  max-width: unset;
-  margin: 0;
-  padding: 0 16px;
-  height: auto;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-around;
-  gap: 0;
-  background: transparent;
-  border-top: none;
-}
-
-.badge-divider { display: none; }
-
-.badge-item {
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 10px;
-  gap: 6px;
-  cursor: default;
-  border-radius: 0;
-  overflow: visible;
-  background: transparent;
-  width: auto;
-}
-.badge-item:hover { background: transparent; }
-.badge-item.active { background: transparent; }
-
-.badge-icon {
-  width: 32px;
-  height: 32px;
-  font-size: 13px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: rgba(200,169,110,0.12);
-  border: 1px solid rgba(200,169,110,0.3);
-  border-right: 1px solid rgba(200,169,110,0.3); /* restore right border */
-  order: 0;
-}
-
-.badge-text {
-  max-width: none;
-  overflow: visible;
-  opacity: 1;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  white-space: nowrap;
-  flex-direction: column;
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
-.badge-text strong {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--white);
-  padding: 0;
-  line-height: 1.2;
-  text-align: center;
-}
-.badge-text span {
-  font-size: 9px;
-  color: rgba(255,255,255,0.45);
-  padding: 0;
-  line-height: 1.2;
-  text-align: center;
-}
-
-  /* Circle icon */
-  .badge-icon {
-    width: 36px; height: 36px;
-    font-size: 14px;
+  .badge-divider {
+    display: block;
+    width: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 14px 0;
     flex-shrink: 0;
-    border-radius: 50% 0 0 50%;
-    background: rgba(10,17,28,0.88);
-    border: 1px solid rgba(200,169,110,0.35);
-    border-right: none;
-    transition: background 0.3s, border-color 0.3s;
-    order: 2;
   }
 
-  /* Active (tapped) state */
-  .badge-item.active .badge-text {
-    max-width: 160px;
-    opacity: 1;
-    padding: 8px 0;
+  .badge-item {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    cursor: default;
+    border-radius: 0;
+    background: transparent;
+    transition: background 0.3s;
+    white-space: nowrap;
   }
-  .badge-item.active .badge-icon {
-    background: rgba(200,169,110,0.2);
-    border-color: var(--accent);
+  .badge-item:hover { background: rgba(200,169,110,0.05); }
+
+  .badge-icon {
+    width: 32px; height: 32px;
+    font-size: 13px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(200,169,110,0.12);
+    border: 1px solid rgba(200,169,110,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    order: 0;
+  }
+
+  .badge-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: visible;
+    opacity: 1;
+    padding: 0;
+    background: transparent;
+    border: none;
+    white-space: nowrap;
+    max-width: none;
+  }
+  .badge-text strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+  }
+  .badge-text span {
+    display: block;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.3;
   }
 
   /* ── Grids ── */
