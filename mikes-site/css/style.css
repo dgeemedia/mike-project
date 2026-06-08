@@ -201,7 +201,7 @@ a { text-decoration: none; color: inherit; }
   max-width: 640px;
 }
 .hero h1 {
-  font-size: clamp(40px, 6vw, 68px);
+  font-size: clamp(40px, 3.5vw, 68px);
   color: var(--white);
   margin-bottom: 20px;
   font-weight: 700;
