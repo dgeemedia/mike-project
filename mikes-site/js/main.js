@@ -1,6 +1,11 @@
 // =============================================
 //   mikes-site/js/main.js — main JS file for Mikes Constructions Group Ltd website
+//   Updated: contact form now posts to CRM backend in addition to Formspree
 // =============================================
+
+// ── CRM endpoint — update this to your deployed CRM URL ──
+const CRM_ENDPOINT = 'https://your-crm-url.railway.app/api/enquiry';
+// e.g. 'https://mikes-crm.railway.app/api/enquiry'
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -66,19 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── FAQ accordion ──
-  // Uses event delegation so it works for both static HTML items AND items
-  // dynamically injected by content.js after DOMContentLoaded.
-  //
-  // FIX (v2): The toggle element (div.faq-toggle) now syncs its text content
-  // to '+' (closed) or '−' (open) whenever an item is opened or closed.
-  // Previously the symbol never changed, leaving all toggles showing '+' even
-  // when an item was visibly expanded.
-  //
-  // FIX (v2): On initial load, any .faq-item that already has class 'open'
-  // (the first static item on faq.html) now has its toggle set to '−' so the
-  // symbol matches the expanded state from the start.
-
-  // Sync toggle symbol for items that start open in the HTML
   document.querySelectorAll('.faq-item.open .faq-toggle').forEach(toggle => {
     toggle.textContent = '−';
   });
@@ -91,14 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isOpen = item.classList.contains('open');
 
-    // Close all items and reset their toggles to '+'
     document.querySelectorAll('.faq-item').forEach(i => {
       i.classList.remove('open');
       const t = i.querySelector('.faq-toggle');
       if (t) t.textContent = '+';
     });
 
-    // Open the clicked item (if it was closed) and set its toggle to '−'
     if (!isOpen) {
       item.classList.add('open');
       const toggle = item.querySelector('.faq-toggle');
@@ -106,7 +96,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Contact form — Formspree integration ──
+  // ── Contact form — Formspree + CRM integration ──────────────────────────
+  //
+  // How it works:
+  //   1. Form submits to Formspree as before (George still gets the email)
+  //   2. Same data is also sent to the CRM backend
+  //   3. CRM saves the enquiry, sends auto-reply to customer, and notifies team
+  //
+  // The form fields expected by the CRM:
+  //   first_name, last_name, email, phone (optional), project_type, message
+  //
+  // If your contact.html has a single "name" field instead of first/last,
+  // see the splitName() helper below — it splits "Mike Smith" → first/last.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  function splitName(fullName) {
+    const parts = (fullName || '').trim().split(/\s+/);
+    const first = parts[0] || '';
+    const last  = parts.slice(1).join(' ') || '';
+    return { first, last };
+  }
+
   const form = document.getElementById('contact-form');
   if (form) {
     if (window.location.search.includes('sent=true')) {
@@ -124,31 +134,64 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = 'Sending…';
       btn.disabled = true;
 
-      try {
-        const data = new FormData(form);
-        const res  = await fetch(form.action, {
+      // ── Collect form values ──
+      const data = new FormData(form);
+
+      // Support both split first/last fields and a single "name" field
+      let firstName = data.get('first_name') || '';
+      let lastName  = data.get('last_name')  || '';
+      if (!firstName) {
+        const split = splitName(data.get('name') || '');
+        firstName = split.first;
+        lastName  = split.last;
+      }
+
+      const crmPayload = {
+        first_name:   firstName,
+        last_name:    lastName,
+        email:        data.get('email')        || '',
+        phone:        data.get('phone')        || '',
+        project_type: data.get('project_type') || data.get('service') || '',
+        message:      data.get('message')      || '',
+      };
+
+      // ── Run Formspree + CRM in parallel ──
+      const [formspreeRes] = await Promise.allSettled([
+
+        // 1. Formspree (unchanged)
+        fetch(form.action, {
           method: 'POST',
           body: data,
-          headers: { 'Accept': 'application/json' }
-        });
+          headers: { 'Accept': 'application/json' },
+        }),
 
-        if (res.ok) {
-          form.reset();
-          btn.textContent = 'Send Message';
-          btn.disabled = false;
-          if (msg) {
-            msg.style.display = 'block';
-            msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => msg.style.display = 'none', 6000);
-          }
-        } else {
-          btn.textContent = 'Send Message';
-          btn.disabled = false;
-          alert('Sorry, something went wrong. Please email us directly at enquiry@mikes-constructions.co.uk');
+        // 2. CRM backend (fire-and-forget; won't block the user)
+        fetch(CRM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(crmPayload),
+        }).catch(err => {
+          // CRM failure is silent — Formspree still handles the enquiry
+          console.warn('CRM submission failed:', err.message);
+        }),
+
+      ]);
+
+      // ── Handle result based on Formspree response ──
+      const formspreeOk =
+        formspreeRes.status === 'fulfilled' && formspreeRes.value?.ok;
+
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+
+      if (formspreeOk) {
+        form.reset();
+        if (msg) {
+          msg.style.display = 'block';
+          msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => { msg.style.display = 'none'; }, 6000);
         }
-      } catch (err) {
-        btn.textContent = 'Send Message';
-        btn.disabled = false;
+      } else {
         alert('Sorry, something went wrong. Please email us directly at enquiry@mikes-constructions.co.uk');
       }
     });
@@ -163,8 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Stats counter animation ──
-  // Exported as window.runStatsCounters() so content.js can re-run it after
-  // Sanity data has updated the data-count values on stat elements.
   window.runStatsCounters = function () {
     const statNums = document.querySelectorAll('.stat-number[data-count]');
     if (!statNums.length) return;
@@ -188,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.5 });
 
     statNums.forEach(n => {
-      // Reset text so counter animates fresh after Sanity data update
       const prefix = n.dataset.prefix || '';
       const suffix = n.dataset.suffix || '';
       n.textContent = prefix + '0' + suffix;
@@ -196,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Run immediately for any static stat numbers already in the DOM
   window.runStatsCounters();
 
   // ── Project filter tabs ──
@@ -204,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (filterTabs.length) {
     filterTabs.forEach(btn => {
       btn.addEventListener('click', () => {
-        // Update active button styling
         filterTabs.forEach(b => {
           b.classList.remove('active', 'btn-dark');
           b.style.background = 'var(--light)';
@@ -225,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (show) {
             item.style.display = '';
-            // Re-trigger reveal animation for items coming back into view
             item.classList.remove('revealed');
             setTimeout(() => {
               const revealObs = new IntersectionObserver(entries => {
