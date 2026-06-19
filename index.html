@@ -1,3 +1,4 @@
+<!--mikes-crm-frontend/index.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -823,7 +824,7 @@ async function loadEnquiries() {
       <div class="enq-avatar" style="background:${av.bg};color:${av.tx}">${initials(e.first_name,e.last_name)}</div>
       <div class="enq-body">
         <div class="enq-top">
-          <span class="enq-name${isUnread?' '':''}">${e.first_name} ${e.last_name}</span>
+          <span class="enq-name">${e.first_name} ${e.last_name}</span>
           <span class="enq-time">${timeAgo(e.created_at)}</span>
         </div>
         <div class="enq-project">${e.project||'General enquiry'}</div>
