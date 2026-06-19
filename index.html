@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mikes Constructions — CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #1D9E75;
+      --green-dark: #0F6E56;
+      --green-light: #E1F5EE;
+      --green-mid: #5DCAA5;
+      --blue: #185FA5;
+      --blue-light: #E6F1FB;
+      --amber-light: #FAEEDA;
+      --amber: #BA7517;
+      --bg: #F8F9FA;
+      --surface: #ffffff;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --light: #F3F4F6;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+    /* ── Login ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0a2e20 0%, #0F6E56 100%);
+    }
+    .login-card {
+      background: white; border-radius: 12px; padding: 40px 36px; width: 360px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .login-logo { text-align: center; margin-bottom: 28px; }
+    .login-logo span { font-size: 28px; }
+    .login-logo h1 { font-size: 18px; font-weight: 600; margin-top: 8px; }
+    .login-logo p { font-size: 13px; color: var(--muted); }
+    .form-field { margin-bottom: 16px; }
+    .form-field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .form-field input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 14px; font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+    }
+    .form-field input:focus { border-color: var(--green); }
+    .btn-primary {
+      width: 100%; padding: 11px; background: var(--green); color: white;
+      border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--green-dark); }
+    .login-error { color: #dc2626; font-size: 13px; text-align: center; margin-top: 12px; display: none; }
+
+    /* ── App shell ── */
+    #app { display: none; height: 100vh; flex-direction: column; }
+    .topbar {
+      height: 52px; background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0;
+      box-shadow: var(--shadow);
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+    .logo-dot { width: 10px; height: 10px; background: var(--green); border-radius: 50%; }
+    .topbar-user { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+    .avatar-sm {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--green-light);
+      color: var(--green-dark); display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+    }
+    .btn-logout { background: none; border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--muted); }
+    .btn-logout:hover { background: var(--light); }
+
+    /* ── Main layout ── */
+    .shell { display: flex; flex: 1; overflow: hidden; }
+    .sidebar {
+      width: 210px; background: var(--surface); border-right: 1px solid var(--border);
+      padding: 16px 0; flex-shrink: 0; display: flex; flex-direction: column;
+    }
+    .sidebar-section { padding: 4px 16px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 4px; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 9px; padding: 8px 16px;
+      color: var(--muted); cursor: pointer; border-radius: 0; font-size: 13px;
+      transition: all 0.1s; border-left: 2px solid transparent;
+    }
+    .sidebar-link:hover { background: var(--light); color: var(--text); }
+    .sidebar-link.active { background: var(--green-light); color: var(--green-dark); border-left-color: var(--green); font-weight: 500; }
+    .sidebar-link svg { flex-shrink: 0; }
+    .badge { margin-left: auto; background: var(--green); color: white; border-radius: 10px; font-size: 10px; padding: 1px 6px; font-weight: 600; }
+    .badge.hidden { display: none; }
+
+    /* ── Content area ── */
+    .content { flex: 1; display: flex; overflow: hidden; }
+
+    /* ── Bookings pane ── */
+    .bookings-pane {
+      flex: 1; overflow-y: auto; padding: 28px 32px; background: var(--bg);
+    }
+    .bookings-pane.hidden { display: none; }
+    .bookings-header { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+    .bookings-empty { color: var(--muted); margin-top: 60px; text-align: center; font-size: 14px; }
+    .booking-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;
+      box-shadow: var(--shadow);
+    }
+    .booking-date-block {
+      background: var(--green-light); color: var(--green-dark); border-radius: 8px;
+      width: 52px; text-align: center; padding: 8px 4px; flex-shrink: 0;
+    }
+    .booking-date-block .bday { font-size: 22px; font-weight: 700; line-height: 1; }
+    .booking-date-block .bmon { font-size: 11px; font-weight: 500; text-transform: uppercase; }
+    .booking-info { flex: 1; }
+    .booking-name { font-weight: 600; font-size: 14px; }
+    .booking-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .booking-time { font-size: 13px; color: var(--green-dark); font-weight: 500; margin-top: 4px; }
+    .booking-status {
+      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;
+    }
+    .booking-status.confirmed { background: var(--green-light); color: var(--green-dark); }
+    .booking-status.cancelled { background: #FEE2E2; color: #991B1B; }
+
+    /* ── Users pane ── */
+    .users-header { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+    .users-subheader { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .user-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+      box-shadow: var(--shadow);
+    }
+    .user-card.inactive { opacity: 0.5; }
+    .user-avatar-lg {
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0;
+      background: var(--green-light); color: var(--green-dark);
+    }
+    .user-info { flex: 1; }
+    .user-card-name { font-weight: 600; font-size: 14px; }
+    .user-card-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .user-role-badge {
+      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;
+      background: var(--green-light); color: var(--green-dark);
+    }
+    .user-role-badge.admin { background: #EDE9FE; color: #5B21B6; }
+    .user-actions { display: flex; gap: 6px; }
+    .btn-sm {
+      font-size: 12px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface); cursor: pointer; color: var(--text);
+    }
+    .btn-sm:hover { background: var(--light); }
+    .btn-sm.danger { color: #dc2626; border-color: #fca5a5; }
+    .btn-sm.danger:hover { background: #FEF2F2; }
+    .btn-sm.success { color: #15803d; border-color: #86efac; }
+    .btn-sm.success:hover { background: #F0FDF4; }
+    .btn-add-user {
+      display: flex; align-items: center; gap: 6px; padding: 9px 16px;
+      background: var(--green-dark); color: white; border: none; border-radius: var(--radius);
+      font-size: 13px; font-weight: 500; cursor: pointer; margin-bottom: 20px;
+    }
+    .btn-add-user:hover { opacity: 0.9; }
+
+    /* ── Create user modal ── */
+    #create-user-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      z-index: 999; align-items: center; justify-content: center;
+    }
+
+    /* ── Enquiries list ── */
+    .list-pane { width: 360px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--surface); }
+    .list-toolbar { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: var(--light); border-radius: 6px; padding: 7px 10px; }
+    .search-box input { background: none; border: none; outline: none; font-size: 13px; width: 100%; font-family: inherit; color: var(--text); }
+    .filter-row { display: flex; gap: 6px; }
+    .filter-pill {
+      font-size: 12px; padding: 4px 10px; border: 1px solid var(--border);
+      border-radius: 20px; background: white; cursor: pointer; color: var(--muted); transition: all 0.1s;
+    }
+    .filter-pill:hover { border-color: var(--green); color: var(--green); }
+    .filter-pill.active { background: var(--green-light); border-color: var(--green-mid); color: var(--green-dark); font-weight: 500; }
+    .list-scroll { flex: 1; overflow-y: auto; }
+
+    /* ── Enquiry row ── */
+    .enq-row {
+      display: flex; align-items: flex-start; gap: 10px; padding: 13px 14px;
+      border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s;
+    }
+    .enq-row:hover { background: var(--light); }
+    .enq-row.active { background: var(--green-light); }
+    .unread-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-top: 6px; flex-shrink: 0; }
+    .pip-spacer { width: 7px; flex-shrink: 0; }
+    .enq-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .enq-body { flex: 1; min-width: 0; }
+    .enq-top { display: flex; align-items: center; margin-bottom: 2px; }
+    .enq-name { font-weight: 500; font-size: 13px; flex: 1; }
+    .enq-time { font-size: 11px; color: var(--muted); }
+    .enq-project { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .enq-snippet { font-size: 12px; color: #9CA3AF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .status-pip { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+
+    /* ── Detail pane ── */
+    .detail-pane { flex: 1; display: flex; flex-direction: column; background: var(--surface); min-width: 0; }
+    .detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 10px; }
+    .detail-empty svg { opacity: 0.3; }
+    .detail-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); }
+    .detail-name-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; flex-shrink: 0; }
+    .detail-name { font-size: 17px; font-weight: 600; }
+    .detail-meta { font-size: 13px; color: var(--muted); }
+    .detail-tags { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+    .tag { font-size: 11px; padding: 3px 9px; border-radius: 12px; font-weight: 500; }
+    .tag-new { background: var(--green-light); color: var(--green-dark); }
+    .tag-replied { background: var(--blue-light); color: var(--blue); }
+    .tag-booked { background: #EAF3DE; color: #3B6D11; }
+    .tag-closed { background: var(--light); color: var(--muted); }
+    .tag-project { background: var(--amber-light); color: var(--amber); }
+    .status-select { font-size: 12px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 12px; background: white; color: var(--muted); cursor: pointer; font-family: inherit; }
+    .thread { flex: 1; overflow-y: auto; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+    .msg { max-width: 85%; }
+    .msg-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .msg-bubble { padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
+    .msg-inbound .msg-bubble { background: var(--light); border-bottom-left-radius: 3px; }
+    .msg-auto { background: var(--blue-light); color: var(--blue); border-radius: 10px; font-size: 13px; line-height: 1.6; padding: 10px 14px; }
+    .msg-auto .msg-label { color: var(--blue); }
+    .msg-outbound { align-self: flex-end; text-align: right; }
+    .msg-outbound .msg-bubble { background: var(--green-light); color: var(--green-dark); border-bottom-right-radius: 3px; }
+    .reply-area { padding: 14px 22px; border-top: 1px solid var(--border); }
+    .reply-area textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+      font-size: 13px; font-family: inherit; resize: none; height: 80px; outline: none;
+      transition: border-color 0.15s; color: var(--text);
+    }
+    .reply-area textarea:focus { border-color: var(--green); }
+    .reply-actions { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+    .btn-send { padding: 8px 18px; background: var(--green); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-send:hover { background: var(--green-dark); }
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { padding: 7px 12px; background: white; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; color: var(--muted); transition: all 0.1s; }
+    .btn-outline:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+    .generating-label { font-size: 12px; color: var(--green); display: none; align-items: center; gap: 5px; margin-left: auto; }
+
+    /* ── Stats row ── */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { background: var(--surface); padding: 14px 20px; text-align: center; }
+    .stat-n { font-size: 24px; font-weight: 600; color: var(--text); }
+    .stat-l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #111; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; }
+
+    .empty-list { padding: 40px; text-align: center; color: var(--muted); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--green-mid); border-top-color: var(--green); border-radius: 50%; animation: spin 0.6s linear infinite; }
+  </style>
+</head>
+<body>
+
+<!-- ── Login screen ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span>🏗</span>
+      <h1>Mikes Constructions</h1>
+      <p>Enquiry CRM — team login</p>
+    </div>
+    <div class="form-field">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="admin, mike, blessing or mo" autocomplete="username" />
+    </div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign in</button>
+    <div class="login-error" id="login-error">Invalid username or password</div>
+  </div>
+</div>
+
+<!-- ── Change password modal ── -->
+<div id="change-pw-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;">
+  <div class="login-card" style="max-width:380px;width:90%;">
+    <div class="login-logo">
+      <span>🔑</span>
+      <h1 id="change-pw-title">Change your password</h1>
+      <p id="change-pw-subtitle">Choose a new password (min 8 characters)</p>
+    </div>
+    <div class="form-field">
+      <label>Current password</label>
+      <input type="password" id="cp-current" placeholder="••••••••" />
+    </div>
+    <div class="form-field">
+      <label>New password</label>
+      <input type="password" id="cp-new" placeholder="min 8 characters" />
+    </div>
+    <div class="form-field">
+      <label>Confirm new password</label>
+      <input type="password" id="cp-confirm" placeholder="repeat new password" />
+    </div>
+    <button class="btn-primary" onclick="submitChangePassword()">Update password</button>
+    <button id="cp-cancel-btn" class="btn-logout" style="width:100%;margin-top:8px;padding:8px;" onclick="hideChangePassword()">Cancel</button>
+    <div class="login-error" id="cp-error"></div>
+  </div>
+</div>
+
+<!-- ── Create user modal ── -->
+<div id="create-user-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;">
+  <div class="login-card" style="max-width:380px;width:90%;">
+    <div class="login-logo">
+      <span>👤</span>
+      <h1>Add new team member</h1>
+      <p>They'll be prompted to change their password on first login</p>
+    </div>
+    <div class="form-field">
+      <label>Full name</label>
+      <input type="text" id="nu-name" placeholder="e.g. Sarah" />
+    </div>
+    <div class="form-field">
+      <label>Username <span style="color:var(--muted);font-weight:400">(lowercase, no spaces)</span></label>
+      <input type="text" id="nu-username" placeholder="e.g. sarah" />
+    </div>
+    <div class="form-field">
+      <label>Role</label>
+      <select id="nu-role" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:14px;background:var(--surface);color:var(--text)">
+        <option value="staff">Staff — can manage enquiries</option>
+        <option value="admin">Admin — full access + user management</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Temporary password <span style="color:var(--muted);font-weight:400">(min 8 characters)</span></label>
+      <input type="text" id="nu-pass" placeholder="they must change this on first login" />
+    </div>
+    <button class="btn-primary" onclick="submitCreateUser()">Create account</button>
+    <button class="btn-logout" style="width:100%;margin-top:8px;padding:8px;" onclick="hideCreateUser()">Cancel</button>
+    <div class="login-error" id="nu-error"></div>
+  </div>
+</div>
+
+<!-- ── Main app ── -->
+<div id="app" style="display:none;flex-direction:column;height:100vh">
+
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-dot"></div>
+      Mikes Constructions CRM
+    </div>
+    <div class="topbar-user">
+      <div class="avatar-sm" id="user-initials">?</div>
+      <span id="user-name"></span>
+      <button class="btn-logout" onclick="showChangePassword()">Change password</button>
+      <button class="btn-logout" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="sidebar">
+      <div class="sidebar-section">Inbox</div>
+      <div class="sidebar-link active" onclick="setFilter('all',this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        All enquiries <span class="badge hidden" id="badge-all">0</span>
+      </div>
+      <div class="sidebar-link" onclick="setFilter('new',this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        New <span class="badge hidden" id="badge-new">0</span>
+      </div>
+      <div class="sidebar-link" onclick="setFilter('replied',this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6"/></svg>
+        Replied
+      </div>
+      <div class="sidebar-link" onclick="setFilter('booked',this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+        Consultation booked
+      </div>
+      <div class="sidebar-link" onclick="setFilter('closed',this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        Closed
+      </div>
+      <div class="sidebar-section">Schedule</div>
+      <div class="sidebar-link" id="bookings-tab" onclick="showBookings(this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+        Bookings <span class="badge hidden" id="badge-bookings">0</span>
+      </div>
+      <div class="sidebar-section admin-only" id="admin-section" style="display:none">Team</div>
+      <div class="sidebar-link admin-only" id="users-tab" style="display:none" onclick="showUsers(this)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Users
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- List pane -->
+      <div class="list-pane">
+        <div class="list-toolbar">
+          <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="#9CA3AF" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="search-input" placeholder="Search name, project, message…" oninput="loadEnquiries()">
+          </div>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-item"><div class="stat-n" id="s-total">—</div><div class="stat-l">Total</div></div>
+          <div class="stat-item"><div class="stat-n" id="s-new">—</div><div class="stat-l">New</div></div>
+          <div class="stat-item"><div class="stat-n" id="s-replied">—</div><div class="stat-l">Replied</div></div>
+          <div class="stat-item"><div class="stat-n" id="s-booked">—</div><div class="stat-l">Booked</div></div>
+        </div>
+        <div class="list-scroll" id="list-scroll"></div>
+      </div>
+
+      <!-- Bookings pane -->
+      <div class="bookings-pane hidden" id="bookings-pane"></div>
+
+      <!-- Users pane -->
+      <div class="bookings-pane hidden" id="users-pane"></div>
+
+      <!-- Detail pane -->
+      <div class="detail-pane" id="detail-pane">
+        <div class="detail-empty">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <p>Select an enquiry to view details</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Update this to your Render backend URL after deploying ──
+const API = 'https://mike-project.onrender.com';
+let token = localStorage.getItem('crm_token');
+let currentUser = localStorage.getItem('crm_user');
+let activeFilter = 'all';
+let selectedId = null;
+let refreshTimer = null;
+
+const AVATARS = [
+  {bg:'#E1F5EE',tx:'#085041'},{bg:'#E6F1FB',tx:'#0C447C'},
+  {bg:'#FAEEDA',tx:'#633806'},{bg:'#FBEAF0',tx:'#4B1528'},{bg:'#EAF3DE',tx:'#27500A'}
+];
+
+function avatarStyle(name) {
+  let h = 0; for (let c of name) h = (h*31+c.charCodeAt(0))%AVATARS.length;
+  return AVATARS[h];
+}
+function initials(fn, ln) { return ((fn?.[0]||'')+(ln?.[0]||'')).toUpperCase(); }
+function timeAgo(ts) {
+  const d = Date.now()-ts, m=Math.floor(d/60000);
+  if (m<1) return 'just now'; if (m<60) return m+'m ago';
+  const h=Math.floor(m/60); if (h<24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
+function showToast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+async function apiFetch(path, opts={}) {
+  const res = await fetch(API+path, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token, ...(opts.headers||{}) }
+  });
+  if (res.status===401) { doLogout(); return null; }
+  return res.json();
+}
+
+// ── Auth ──
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-error');
+  err.style.display = 'none';
+  try {
+    const res = await fetch(API+'/api/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username:user, password:pass})
+    });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = data.error || 'Invalid username or password'; err.style.display='block'; return; }
+    token = data.token; currentUser = data.name;
+    localStorage.setItem('crm_token', token);
+    localStorage.setItem('crm_user', currentUser);
+    localStorage.setItem('crm_role', data.role || 'staff');
+    if (data.mustChangePassword) {
+      // Force password change before showing the app
+      showApp();
+      showChangePassword(true);
+    } else {
+      showApp();
+    }
+  } catch { err.textContent='Could not connect to server.'; err.style.display='block'; }
+}
+document.addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  localStorage.removeItem('crm_token');
+  localStorage.removeItem('crm_user');
+  localStorage.removeItem('crm_role');
+  clearInterval(refreshTimer);
+  document.getElementById('app').style.display='none';
+  document.getElementById('change-pw-overlay').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+
+// ── Change password ──
+function showChangePassword(forced = false) {
+  const overlay = document.getElementById('change-pw-overlay');
+  const cancelBtn = document.getElementById('cp-cancel-btn');
+  const subtitle = document.getElementById('change-pw-subtitle');
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  document.getElementById('cp-error').style.display = 'none';
+  if (forced) {
+    subtitle.textContent = 'You must set a new password before continuing.';
+    cancelBtn.style.display = 'none';
+  } else {
+    subtitle.textContent = 'Choose a new password (min 8 characters)';
+    cancelBtn.style.display = 'block';
+  }
+  overlay.style.display = 'flex';
+}
+
+function hideChangePassword() {
+  document.getElementById('change-pw-overlay').style.display = 'none';
+}
+
+async function submitChangePassword() {
+  const currentPassword = document.getElementById('cp-current').value;
+  const newPassword     = document.getElementById('cp-new').value;
+  const confirm         = document.getElementById('cp-confirm').value;
+  const errEl           = document.getElementById('cp-error');
+  errEl.style.display   = 'none';
+
+  if (!currentPassword || !newPassword || !confirm) {
+    errEl.textContent = 'All fields are required'; errEl.style.display = 'block'; return;
+  }
+  if (newPassword !== confirm) {
+    errEl.textContent = 'New passwords do not match'; errEl.style.display = 'block'; return;
+  }
+  if (newPassword.length < 8) {
+    errEl.textContent = 'New password must be at least 8 characters'; errEl.style.display = 'block'; return;
+  }
+
+  const res = await fetch(API+'/api/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  const data = await res.json();
+  if (!res.ok) { errEl.textContent = data.error || 'Failed to change password'; errEl.style.display = 'block'; return; }
+
+  hideChangePassword();
+  showToast('Password changed successfully ✓');
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display='none';
+  const app = document.getElementById('app');
+  app.style.display='flex';
+  document.getElementById('user-name').textContent = currentUser;
+  const av = avatarStyle(currentUser);
+  const el = document.getElementById('user-initials');
+  el.textContent = currentUser.slice(0,2).toUpperCase();
+  el.style.background = av.bg; el.style.color = av.tx;
+  loadStats(); loadEnquiries(); loadBookings(); loadUsersIfAdmin();
+  refreshTimer = setInterval(()=>{ loadStats(); loadEnquiries(); loadBookings(); }, 30000);
+}
+
+// ── Stats ──
+async function loadStats() {
+  const s = await apiFetch('/api/stats');
+  if (!s) return;
+  document.getElementById('s-total').textContent = s.total;
+  document.getElementById('s-new').textContent = s.new;
+  document.getElementById('s-replied').textContent = s.replied;
+  document.getElementById('s-booked').textContent = s.booked;
+  const bn = document.getElementById('badge-new');
+  bn.textContent = s.new; bn.classList.toggle('hidden', s.new===0);
+  const ba = document.getElementById('badge-all');
+  ba.textContent = s.total; ba.classList.toggle('hidden', s.total===0);
+}
+
+// ── Filter ──
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('bookings-pane').classList.add('hidden');
+  document.getElementById('users-pane').classList.add('hidden');
+  document.querySelector('.list-pane').style.display = '';
+  document.getElementById('detail-pane').style.display = '';
+  loadEnquiries();
+}
+
+function showBookings(el) {
+  document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelector('.list-pane').style.display = 'none';
+  document.getElementById('detail-pane').style.display = 'none';
+  document.getElementById('users-pane').classList.add('hidden');
+  document.getElementById('bookings-pane').classList.remove('hidden');
+  renderBookings();
+}
+
+let bookingsCache = [];
+
+async function loadBookings() {
+  const data = await apiFetch('/api/bookings');
+  if (!data) return;
+  bookingsCache = data;
+  // Update badge with upcoming confirmed count
+  const upcoming = data.filter(b => b.status === 'confirmed' && new Date(b.start_time) >= new Date());
+  const badge = document.getElementById('badge-bookings');
+  badge.textContent = upcoming.length;
+  badge.classList.toggle('hidden', upcoming.length === 0);
+  // Re-render if pane is visible
+  if (!document.getElementById('bookings-pane').classList.contains('hidden')) {
+    renderBookings();
+  }
+}
+
+function renderBookings() {
+  const pane = document.getElementById('bookings-pane');
+  if (!bookingsCache.length) {
+    pane.innerHTML = `<div class="bookings-header">📅 Site Visit Bookings</div>
+      <div class="bookings-empty">No bookings yet.<br>They appear here automatically when a customer books via Calendly.</div>`;
+    return;
+  }
+  const now = new Date();
+  const upcoming = bookingsCache.filter(b => b.status === 'confirmed' && new Date(b.start_time) >= now);
+  const past     = bookingsCache.filter(b => b.status !== 'confirmed' || new Date(b.start_time) < now);
+
+  function cardHtml(b) {
+    const dt  = b.start_time ? new Date(b.start_time) : null;
+    const day = dt ? dt.toLocaleString('en-GB', { day: 'numeric', timeZone: 'Europe/London' }) : '?';
+    const mon = dt ? dt.toLocaleString('en-GB', { month: 'short', timeZone: 'Europe/London' }) : '';
+    const time = dt ? dt.toLocaleString('en-GB', { weekday:'short', hour:'2-digit', minute:'2-digit', timeZone:'Europe/London' }) : 'Time TBC';
+    const project = b.project ? ` · ${b.project}` : '';
+    return `<div class="booking-card">
+      <div class="booking-date-block"><div class="bday">${day}</div><div class="bmon">${mon}</div></div>
+      <div class="booking-info">
+        <div class="booking-name">${b.invitee_name}</div>
+        <div class="booking-meta">${b.invitee_email}${project}</div>
+        <div class="booking-time">🕐 ${time}</div>
+      </div>
+      <span class="booking-status ${b.status}">${b.status}</span>
+    </div>`;
+  }
+
+  pane.innerHTML = `<div class="bookings-header">📅 Site Visit Bookings</div>
+    ${upcoming.length ? `<div style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Upcoming (${upcoming.length})</div>${upcoming.map(cardHtml).join('')}` : ''}
+    ${past.length ? `<div style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin:20px 0 10px;">Past & Cancelled</div>${past.map(cardHtml).join('')}` : ''}`;
+}
+
+// ── Users panel (admin only) ──
+function showUsers(el) {
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelector('.list-pane').style.display = 'none';
+  document.getElementById('detail-pane').style.display = 'none';
+  document.getElementById('bookings-pane').classList.add('hidden');
+  document.getElementById('users-pane').classList.remove('hidden');
+  renderUsers();
+}
+
+function hideUsersPaneUI() {
+  document.getElementById('users-pane').classList.add('hidden');
+}
+
+let usersCache = [];
+
+async function loadUsersIfAdmin() {
+  const role = localStorage.getItem('crm_role');
+  if (role !== 'admin') return;
+  // Show the admin sidebar items
+  document.getElementById('admin-section').style.display = '';
+  document.getElementById('users-tab').style.display = '';
+  const data = await apiFetch('/api/users');
+  if (data) usersCache = data;
+}
+
+async function renderUsers() {
+  const pane = document.getElementById('users-pane');
+  if (!usersCache.length) {
+    const data = await apiFetch('/api/users');
+    if (data) usersCache = data;
+  }
+
+  const roleLabel = r => r === 'admin'
+    ? `<span class="user-role-badge admin">Admin</span>`
+    : `<span class="user-role-badge">Staff</span>`;
+
+  const statusLabel = u => u.active === 0
+    ? `<span style="font-size:11px;color:#dc2626;font-weight:600;">Deactivated</span>`
+    : u.must_change_password
+      ? `<span style="font-size:11px;color:#d97706;font-weight:600;">Must change password</span>`
+      : `<span style="font-size:11px;color:#15803d;font-weight:600;">Active</span>`;
+
+  const actions = u => {
+    const currentId = usersCache.find(x => x.username === localStorage.getItem('crm_user')?.toLowerCase())?.id;
+    const isSelf = u.id === currentId;
+    let btns = `<button class="btn-sm" onclick="doResetPassword('${u.id}','${u.display_name}')">Reset password</button>`;
+    if (!isSelf) {
+      if (u.active === 0) {
+        btns += `<button class="btn-sm success" onclick="doActivate('${u.id}','${u.display_name}')">Reactivate</button>`;
+      } else {
+        btns += `<button class="btn-sm danger" onclick="doDeactivate('${u.id}','${u.display_name}')">Deactivate</button>`;
+      }
+    }
+    return `<div class="user-actions">${btns}</div>`;
+  };
+
+  pane.innerHTML = `
+    <div class="users-header">👥 Team Members</div>
+    <div class="users-subheader">Manage who can access the CRM. Deactivated users cannot log in but their history is preserved.</div>
+    <button class="btn-add-user" onclick="showCreateUser()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Add team member
+    </button>
+    ${usersCache.map(u => `
+      <div class="user-card ${u.active === 0 ? 'inactive' : ''}">
+        <div class="user-avatar-lg">${u.display_name[0].toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-card-name">${u.display_name} ${roleLabel(u.role)}</div>
+          <div class="user-card-meta">@${u.username} · ${statusLabel(u)}</div>
+        </div>
+        ${actions(u)}
+      </div>`).join('')}`;
+}
+
+// ── Create user ──
+function showCreateUser() {
+  document.getElementById('nu-name').value = '';
+  document.getElementById('nu-username').value = '';
+  document.getElementById('nu-pass').value = '';
+  document.getElementById('nu-role').value = 'staff';
+  document.getElementById('nu-error').style.display = 'none';
+  document.getElementById('create-user-overlay').style.display = 'flex';
+}
+function hideCreateUser() {
+  document.getElementById('create-user-overlay').style.display = 'none';
+}
+// Auto-fill username from name
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('nu-name')?.addEventListener('input', e => {
+    document.getElementById('nu-username').value = e.target.value.toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9_]/g,'');
+  });
+});
+async function submitCreateUser() {
+  const display_name  = document.getElementById('nu-name').value.trim();
+  const username      = document.getElementById('nu-username').value.trim().toLowerCase();
+  const role          = document.getElementById('nu-role').value;
+  const tempPassword  = document.getElementById('nu-pass').value;
+  const errEl         = document.getElementById('nu-error');
+  errEl.style.display = 'none';
+
+  if (!display_name || !username || !tempPassword) {
+    errEl.textContent = 'All fields are required'; errEl.style.display = 'block'; return;
+  }
+  const res  = await fetch(API+'/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+    body: JSON.stringify({ username, display_name, role, tempPassword }),
+  });
+  const data = await res.json();
+  if (!res.ok) { errEl.textContent = data.error || 'Failed to create user'; errEl.style.display = 'block'; return; }
+  hideCreateUser();
+  usersCache = [];
+  await renderUsers();
+  showToast(`${display_name} added ✓ — share their temporary password with them`);
+}
+
+// ── Deactivate / Activate ──
+async function doDeactivate(id, name) {
+  if (!confirm(`Deactivate ${name}? They will not be able to log in until reactivated.`)) return;
+  const res  = await apiFetch(`/api/users/${id}/deactivate`, { method: 'POST' });
+  if (res?.ok) { usersCache = []; await renderUsers(); showToast(`${name} deactivated`); }
+}
+async function doActivate(id, name) {
+  const res = await apiFetch(`/api/users/${id}/activate`, { method: 'POST' });
+  if (res?.ok) { usersCache = []; await renderUsers(); showToast(`${name} reactivated ✓`); }
+}
+
+// ── Reset password ──
+async function doResetPassword(id, name) {
+  const temp = prompt(`Set a temporary password for ${name} (min 8 characters):`);
+  if (!temp) return;
+  if (temp.length < 8) { showToast('Password must be at least 8 characters'); return; }
+  const res = await fetch(API+`/api/users/${id}/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+    body: JSON.stringify({ tempPassword: temp }),
+  });
+  const data = await res.json();
+  if (res.ok) showToast(`${name}'s password reset ✓ — share the temp password with them`);
+  else showToast(data.error || 'Failed to reset password');
+}
+
+// ── Enquiry list ──
+async function loadEnquiries() {
+  const q = document.getElementById('search-input').value;
+  const params = new URLSearchParams();
+  if (activeFilter!=='all') params.set('status', activeFilter);
+  if (q) params.set('search', q);
+  const rows = await apiFetch('/api/enquiries?'+params);
+  if (!rows) return;
+  const scroll = document.getElementById('list-scroll');
+  if (!rows.length) {
+    scroll.innerHTML = '<div class="empty-list">No enquiries found</div>'; return;
+  }
+  scroll.innerHTML = rows.map(e => {
+    const av = avatarStyle(e.first_name);
+    const statusColor = {new:' #1D9E75',replied:'#185FA5',booked:'#3B6D11',closed:'#9CA3AF'}[e.status]||'#9CA3AF';
+    const isUnread = e.status==='new';
+    return `<div class="enq-row${e.id===selectedId?' active':''}" onclick="selectEnquiry('${e.id}')">
+      ${isUnread ? '<div class="unread-pip"></div>' : '<div class="pip-spacer"></div>'}
+      <div class="enq-avatar" style="background:${av.bg};color:${av.tx}">${initials(e.first_name,e.last_name)}</div>
+      <div class="enq-body">
+        <div class="enq-top">
+          <span class="enq-name${isUnread?' '':''}">${e.first_name} ${e.last_name}</span>
+          <span class="enq-time">${timeAgo(e.created_at)}</span>
+        </div>
+        <div class="enq-project">${e.project||'General enquiry'}</div>
+        <div class="enq-snippet">${e.message}</div>
+      </div>
+      <div class="status-pip" style="background:${statusColor}"></div>
+    </div>`;
+  }).join('');
+}
+
+// ── Detail pane ──
+async function selectEnquiry(id) {
+  selectedId = id;
+  loadEnquiries();
+  const e = await apiFetch('/api/enquiries/'+id);
+  if (!e) return;
+  const av = avatarStyle(e.first_name);
+  const tagClass = {new:'tag-new',replied:'tag-replied',booked:'tag-booked',closed:'tag-closed'}[e.status]||'tag-new';
+
+  const thread = [
+    `<div class="msg msg-inbound">
+      <div class="msg-label">${e.first_name} wrote · ${timeAgo(e.created_at)}</div>
+      <div class="msg-bubble">${e.message}</div>
+    </div>`,
+    ...(e.replies||[]).map(r => {
+      if (r.from_type==='auto') return `<div class="msg"><div class="msg-label" style="color:var(--blue)">Auto-reply sent</div><div class="msg-auto">${r.body}</div></div>`;
+      return `<div class="msg msg-outbound"><div class="msg-label">${r.from_name} replied</div><div class="msg-bubble">${r.body.replace(/\n/g,'<br>')}</div></div>`;
+    })
+  ].join('');
+
+  document.getElementById('detail-pane').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-name-row">
+        <div class="detail-avatar" style="background:${av.bg};color:${av.tx}">${initials(e.first_name,e.last_name)}</div>
+        <div>
+          <div class="detail-name">${e.first_name} ${e.last_name}</div>
+          <div class="detail-meta">${e.email}${e.phone?' · '+e.phone:''}</div>
+        </div>
+      </div>
+      <div class="detail-tags">
+        <span class="tag ${tagClass}" id="status-tag">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</span>
+        ${e.project?`<span class="tag tag-project">${e.project}</span>`:''}
+        <select class="status-select" onchange="updateStatus('${e.id}',this.value)">
+          <option value="">Move to…</option>
+          <option value="new">New</option>
+          <option value="replied">Replied</option>
+          <option value="booked">Booked</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+    </div>
+    <div class="thread" id="thread">${thread}</div>
+    <div class="reply-area">
+      <textarea id="reply-body" placeholder="Write a reply to ${e.first_name}…"></textarea>
+      <div class="reply-actions">
+        <button class="btn-send" id="btn-send" onclick="sendReply('${e.id}')">Send email reply</button>
+        <button class="btn-outline" id="btn-draft" onclick="aiDraft('${e.id}')">AI draft</button>
+        <div class="generating-label" id="generating"><div class="spinner"></div> Writing…</div>
+      </div>
+    </div>`;
+  scrollThread();
+}
+
+function scrollThread() { const t=document.getElementById('thread'); if(t) t.scrollTop=t.scrollHeight; }
+
+async function updateStatus(id, status) {
+  if (!status) return;
+  await apiFetch('/api/enquiries/'+id+'/status', { method:'PATCH', body: JSON.stringify({status}) });
+  showToast('Status updated to '+status);
+  loadStats(); selectEnquiry(id); loadEnquiries();
+}
+
+async function sendReply(id) {
+  const body = document.getElementById('reply-body').value.trim();
+  if (!body) { showToast('Write a message first'); return; }
+  const btn = document.getElementById('btn-send');
+  btn.disabled=true; btn.textContent='Sending…';
+  const r = await apiFetch('/api/enquiries/'+id+'/reply', { method:'POST', body: JSON.stringify({body}) });
+  btn.disabled=false; btn.textContent='Send email reply';
+  if (r?.ok) { showToast('Reply sent ✓'); selectEnquiry(id); loadStats(); loadEnquiries(); }
+  else showToast('Failed to send — check SMTP settings');
+}
+
+async function aiDraft(id) {
+  const btn = document.getElementById('btn-draft');
+  const gen = document.getElementById('generating');
+  btn.disabled=true; gen.style.display='flex';
+  const r = await apiFetch('/api/enquiries/'+id+'/ai-draft', { method:'POST' });
+  btn.disabled=false; gen.style.display='none';
+  if (r?.draft) document.getElementById('reply-body').value = r.draft;
+  else showToast('AI draft failed — check GEMINI_API_KEY');
+}
+
+// Auto-start if already logged in
+if (token && currentUser) showApp();
+</script>
+</body>
+</html>
