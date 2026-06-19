@@ -4,7 +4,7 @@
 // =============================================
 
 // ── CRM endpoint — update this to your deployed CRM URL ──
-const CRM_ENDPOINT = 'https://your-crm-url.railway.app/api/enquiry';
+const CRM_ENDPOINT = 'https://mike-project.onrender.com/api/enquiry';
 // e.g. 'https://mikes-crm.railway.app/api/enquiry'
 
 document.addEventListener('DOMContentLoaded', () => {
