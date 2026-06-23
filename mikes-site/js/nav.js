@@ -14,6 +14,7 @@ const NAV_HTML = `
         <li><a href="projects.html">Our Projects</a></li>
         <li><a href="blog.html">News</a></li>
         <li><a href="faq.html">FAQs</a></li>
+        <li><a href="careers.html">Careers</a></li>
         <li><a href="contact.html" class="nav-cta">Get a Quote</a></li>
         <li class="mobile-social" style="display:none;list-style:none;border-bottom:none!important;border-top:none!important">
           <a href="https://www.facebook.com/mikesconstructions24" target="_blank" rel="noopener" class="social-link" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
@@ -57,6 +58,7 @@ const FOOTER_HTML = `
           <li><a href="services.html">Services</a></li>
           <li><a href="projects.html">Our Projects</a></li>
           <li><a href="blog.html">News &amp; Tips</a></li>
+          <li><a href="careers.html">Careers</a></li>
           <li><a href="faq.html">FAQs</a></li>
         </ul>
       </div>
