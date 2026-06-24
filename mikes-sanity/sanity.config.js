@@ -36,6 +36,9 @@ export default defineConfig({
             S.listItem().title('❓ FAQ Page').child(
               S.document().schemaType('faqPage').documentId('faqPage')
             ),
+            S.listItem().title('💼 Careers Page').child(
+              S.document().schemaType('careerPage').documentId('careerPage')
+            ),
 
             S.divider(),
 

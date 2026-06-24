@@ -1,25 +1,22 @@
 // mikes-sanity/schemas/index.js
-// NOTE: 'about' schema removed — it was never registered or queried.
-//       The about page uses 'aboutPage' instead.
-//       'service' schema kept — it powers the Studio collection sidebar
-//       but is not currently rendered on the site (future use).
 
-import homepage      from './homepage'
-import aboutPage     from './aboutPage'
-import servicesPage  from './servicesPage'
-import projectsPage  from './projectsPage'
-import contactPage   from './contactPage'
-import faqPage       from './faqPage'
-import project       from './project'
-import post          from './post'
-import service       from './service'
-import testimonial   from './testimonial'
-import siteSettings  from './siteSettings'
+import homepage       from './homepage'
+import aboutPage      from './aboutPage'
+import servicesPage   from './servicesPage'
+import projectsPage   from './projectsPage'
+import contactPage    from './contactPage'
+import faqPage        from './faqPage'
+import careerPage     from './careerPage'
+import project        from './project'
+import post           from './post'
+import service        from './service'
+import testimonial    from './testimonial'
+import siteSettings   from './siteSettings'
 import designSettings from './designSettings'
 
 export const schemaTypes = [
   // Pages
-  homepage, aboutPage, servicesPage, projectsPage, contactPage, faqPage,
+  homepage, aboutPage, servicesPage, projectsPage, contactPage, faqPage, careerPage,
   // Collections
   project, post, service, testimonial,
   // Settings

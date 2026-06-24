@@ -1265,6 +1265,350 @@
   {
     "fields": [
       {
+        "fields": [
+          {
+            "initialValue": "Join Our",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Team",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 2,
+            "initialValue": "We are always on the lookout for skilled, passionate tradespeople who take pride in their work.",
+            "name": "subtext",
+            "type": "text",
+            "title": "Hero Subtext"
+          }
+        ],
+        "name": "pageHero",
+        "type": "object",
+        "title": "🎯 Page Header"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Work With Us",
+            "name": "label",
+            "type": "string",
+            "title": "Section Label"
+          },
+          {
+            "initialValue": "Build Your",
+            "name": "headingMain",
+            "type": "string",
+            "title": "Heading (white)"
+          },
+          {
+            "initialValue": "Career With Us",
+            "name": "headingAccent",
+            "type": "string",
+            "title": "Heading (gold)"
+          },
+          {
+            "rows": 3,
+            "initialValue": "Mikes Constructions Group Ltd is growing and we want experienced, reliable professionals to grow with us. We offer ongoing work for tradespeople who care about quality and take pride in what they build.",
+            "name": "paragraph",
+            "type": "text",
+            "title": "Intro Paragraph"
+          }
+        ],
+        "name": "intro",
+        "type": "object",
+        "title": "📝 Intro Section"
+      },
+      {
+        "initialValue": [
+          {
+            "icon": "📅",
+            "title": "Ongoing Work",
+            "description": "No chasing for the next job. We provide consistent, long-term project pipelines across Cheshire and beyond."
+          },
+          {
+            "icon": "🤝",
+            "title": "Fair Pay",
+            "description": "Competitive rates paid promptly. We respect the skill you bring and price it accordingly."
+          },
+          {
+            "icon": "🏆",
+            "title": "Quality Projects",
+            "description": "Work on projects you can be proud of — residential renovations and commercial builds to a high standard."
+          },
+          {
+            "icon": "🔧",
+            "title": "Supportive Team",
+            "description": "A professional, no-nonsense team environment where your experience is valued from day one."
+          }
+        ],
+        "description": "Cards shown in the \"Why Work With Us\" section. Recommended: 3–4 cards.",
+        "of": [
+          {
+            "fields": [
+              {
+                "initialValue": "🏗",
+                "name": "icon",
+                "type": "string",
+                "title": "Icon (emoji)"
+              },
+              {
+                "name": "title",
+                "type": "string",
+                "title": "Perk Title"
+              },
+              {
+                "rows": 2,
+                "name": "description",
+                "type": "text"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "perks",
+        "type": "array",
+        "title": "✅ Why Work With Us (perks/benefits)"
+      },
+      {
+        "description": "Each job posting appears as a card on the careers page. Add, remove, or edit listings here.",
+        "of": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "description": "e.g. \"Multi-Trade Construction Workers Required\"",
+                "name": "title",
+                "type": "string",
+                "title": "Job Title"
+              },
+              {
+                "initialValue": "Crewe Area",
+                "description": "e.g. \"Crewe Area\", \"Cheshire & North West\"",
+                "name": "location",
+                "type": "string",
+                "title": "Location / Area"
+              },
+              {
+                "options": {
+                  "list": [
+                    {
+                      "title": "Ongoing / Freelance",
+                      "value": "Ongoing / Freelance"
+                    },
+                    {
+                      "title": "Full-Time",
+                      "value": "Full-Time"
+                    },
+                    {
+                      "title": "Part-Time",
+                      "value": "Part-Time"
+                    },
+                    {
+                      "title": "Contract",
+                      "value": "Contract"
+                    }
+                  ],
+                  "layout": "radio"
+                },
+                "initialValue": "Ongoing / Freelance",
+                "name": "employmentType",
+                "type": "string"
+              },
+              {
+                "options": {
+                  "list": [
+                    {
+                      "title": "✅ Active",
+                      "value": "active"
+                    },
+                    {
+                      "title": "⏸ Paused",
+                      "value": "paused"
+                    },
+                    {
+                      "title": "🔒 Closed",
+                      "value": "closed"
+                    }
+                  ],
+                  "layout": "radio"
+                },
+                "initialValue": "active",
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "valid",
+                        "constraint": [
+                          "active",
+                          "paused",
+                          "closed"
+                        ]
+                      },
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "status",
+                "type": "string",
+                "title": "Listing Status"
+              },
+              {
+                "description": "List each trade or role on a separate line.",
+                "of": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "name": "trades",
+                "type": "array",
+                "title": "Trades / Roles Listed"
+              },
+              {
+                "fields": [
+                  {
+                    "initialValue": "Monday to Friday",
+                    "name": "days",
+                    "type": "string"
+                  },
+                  {
+                    "initialValue": "8:00 AM",
+                    "name": "startTime",
+                    "type": "string"
+                  },
+                  {
+                    "initialValue": "5:00 PM",
+                    "name": "endTime",
+                    "type": "string"
+                  },
+                  {
+                    "initialValue": "1-hour lunch break",
+                    "name": "lunchBreak",
+                    "type": "string"
+                  }
+                ],
+                "name": "workingHours",
+                "type": "object"
+              },
+              {
+                "description": "List each requirement on a separate line.",
+                "of": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "name": "requirements",
+                "type": "array"
+              },
+              {
+                "rows": 4,
+                "description": "A short overview of the role shown on the listing card.",
+                "name": "description",
+                "type": "text",
+                "title": "Role Description"
+              },
+              {
+                "initialValue": "https://forms.gle/tNPrrWRNBVfbWzUP9",
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "description": "Link to the application form (e.g. Google Form, Typeform, etc.)",
+                "name": "applyUrl",
+                "type": "url",
+                "title": "Application Link (URL)"
+              },
+              {
+                "initialValue": "Apply Now",
+                "name": "applyButtonText",
+                "type": "string"
+              },
+              {
+                "name": "publishedAt",
+                "type": "datetime",
+                "title": "Date Posted"
+              }
+            ],
+            "type": "object",
+            "name": "jobListing"
+          }
+        ],
+        "name": "jobListings",
+        "type": "array",
+        "title": "💼 Job Listings"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": "Don't See Your Trade Listed?",
+            "name": "heading",
+            "type": "string"
+          },
+          {
+            "rows": 2,
+            "initialValue": "We're always interested in hearing from skilled tradespeople. Send us your details and we'll be in touch when a suitable project comes up.",
+            "name": "subtext",
+            "type": "text"
+          },
+          {
+            "initialValue": "Get in Touch",
+            "name": "primaryButtonText",
+            "type": "string",
+            "title": "Button Text"
+          },
+          {
+            "initialValue": "contact.html",
+            "name": "primaryButtonUrl",
+            "type": "string",
+            "title": "Button Link (URL)"
+          }
+        ],
+        "name": "ctaBanner",
+        "type": "object",
+        "title": "📣 Bottom CTA Banner"
+      }
+    ],
+    "name": "careerPage",
+    "type": "document",
+    "title": "Careers Page"
+  },
+  {
+    "fields": [
+      {
         "validation": [
           {
             "level": "error",
